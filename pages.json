@@ -1,0 +1,26 @@
+{
+	"pages": [ //pages数组中第一项表示应用启动页，参考：https://uniapp.dcloud.io/collocation/pages
+		{
+			"path": "pages/index/index",
+			"style": {
+				"navigationBarTitleText": "人亲往来簿"
+			}
+		}, {
+			"path": "pages/createNewBill/createNewBill",
+			"style": {
+				"navigationBarTitleText": "添加新账簿"
+			}
+		}, {
+			"path": "pages/billDetail/billDetail",
+			"style": {
+				"navigationBarTitleText": "账簿具体"
+			}
+		}
+	],
+	"globalStyle": {
+		"navigationBarTextStyle": "black",
+		"navigationBarTitleText": "添加新账簿",
+		"navigationBarBackgroundColor": "#F8F8F8",
+		"backgroundColor": "#F8F8F8"
+	}
+}
