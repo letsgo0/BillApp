@@ -11,9 +11,19 @@
 				"navigationBarTitleText": "添加新账簿"
 			}
 		}, {
-			"path": "pages/billDetail/billDetail",
+			"path": "pages/billDetail/billDetail-x",
 			"style": {
 				"navigationBarTitleText": "账簿具体"
+			}
+		},  {
+			"path": "pages/billDetail/billDetail-y",
+			"style": {
+				"navigationBarTitleText": "账簿具体"
+			}
+		},{
+			"path": "pages/createNewBillDetail/createNewBillDetail",
+			"style": {
+				"navigationBarTitleText": "添加账簿记录"
 			}
 		}
 	],

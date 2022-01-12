@@ -1,19 +1,28 @@
 <template>
 	<view class="content">
 		<input id="bill-search-btn" placeholder="账簿搜索框" type="text" value="" />
-		<uni-list class="bill-list">
-			<uni-list-item v-for="bill in bills" :key="bill.id" :title="bill.title">
-				<view class="bill">
-					<image src="../../static/logo.png" mode="aspectFit"></image>
-					<view class="bill-info">
-						<text>{{bill.title}}</text>
-						<text>{{bill.createdTime}}</text>
-						<text>{{bill.description}}</text>
-					</view>
-				</view>
-			</uni-list-item>
-		</uni-list>
-		<button class="add-new-bill" type="warn">添加新账簿</button>
+		<scroll-view scroll-y="true" class="bill-list">
+			<view>
+				<uni-list id="bill-list">
+					<template v-for="(bill,index) in bills" :key="bill.id">
+						<view class="slide" @touchstart="touchStart(index,$event)" @touchend="touchEnd(index,$event)"
+							@touchmove="touchMove(index,$event)"
+							:style="{transform:'translateX(' + bill.translateX + 'px)'}">
+							<uni-list-chat class="slide-index" :clickable="true" :border="true" :title="bill.name"
+								:avatar="bill.imgPath || imgDefaultPath" :note="bill.desc" :time="bill.createdTime"
+								link="navigateTo" :to="'../billDetail/billDetail-x?billId='+bill.id"></uni-list-chat>
+							<view class="operation">
+								<view>
+									<button @click="editBill(index)" type="default">修改</button>
+									<button @click="deleteBill(index)" type="warn">删除</button>
+								</view>
+							</view>
+						</view>
+					</template>
+				</uni-list>
+			</view>
+		</scroll-view>
+		<button @click="addNewBill" class="tab-bar" type="warn">添加新账簿</button>
 	</view>
 </template>
 
@@ -21,63 +30,120 @@
 	export default {
 		data() {
 			return {
-				title: 'Hello',
-				bills: [{
-					id: 1,
-					title: "二零一五年三月九",
-					createdTime: new Date(),
-					description: "热热闹闹",
-				}, {
-					id: 1,
-					title: "二零一五年三月九",
-					createdTime: new Date(),
-					description: "热热闹闹",
-				}, {
-					id: 1,
-					title: "二零一五年三月九",
-					createdTime: new Date(),
-					description: "热热闹闹",
-				}]
+				bills: [],
+				isdrag: false,
+				translateXRange: {
+					min: 0,
+					max: 0
+				},
+				initTranslateX: 0,
+				initPageX: 0,
+				imgDefaultPath: '/static/logo.png',
 			}
 		},
 		onLoad() {
-
+			this.loadBillsList();
 		},
 		methods: {
-
+			editBill(index) {
+				const param = this.bills[index];
+				const url =
+					`../createNewBill/createNewBill?id=${param.id}&name=${param.name}&desc=${param.desc}&imgPath=${param.imgPath}`;
+				console.log(url);
+				uni.navigateTo({
+					url: url,
+				})
+			},
+			deleteBill(index) {
+				const that = this;
+				uni.showModal({
+					showCancel: true,
+					title: '警告',
+					content: '确定删除此账单？不可撤回！',
+					confirmText: '删除',
+					confirmColor: '#E43D33',
+					cancelColor: '#18BC37',
+					cancelText: '不小心点错了',
+					success: (res) => {
+						if (!res.confirm) return;
+						getApp().globalData.DB.deleteBill(this.bills[index].id)
+							.then(res => {
+								// console.log(res);
+								that.loadBillsList();
+							})
+							.catch(error => {
+								// console.log(error);
+							})
+					}
+				})
+			},
+			touchStart(index, e) {
+				const that = this;
+				this.isdrag = true;
+				const view = uni.createSelectorQuery().in(this).select(".operation");
+				view.boundingClientRect(data => {
+					that.translateXRange = {
+						min: -(data.width),
+						max: 0
+					};
+				}).exec();
+				this.bills[index].translateX = this.bills[index].translateX ?? 0; // 添加属性
+				this.initTranslateX = this.bills[index].translateX;
+				this.initPageX = e.touches[0].pageX;
+			},
+			touchEnd(index, e) {
+				if (this.bills[index].translateX > this.initTranslateX - 10) {
+					this.bills[index].translateX = this.translateXRange.max;
+				} else {
+					this.bills[index].translateX = this.translateXRange.min;
+				}
+				this.isdrag = false;
+			},
+			touchMove(index, e) {
+				if (this.isdrag) {
+					const newTranslateX = this.initTranslateX + e.touches[0].pageX - this.initPageX;
+					if (newTranslateX < this.translateXRange.min) {
+						this.bills[index].translateX = this.translateXRange.min;
+					} else if (newTranslateX > this.translateXRange.max) {
+						this.bills[index].translateX = this.translateXRange.max;
+					} else {
+						this.bills[index].translateX = newTranslateX;
+					}
+				}
+			},
+			loadBillsList() {
+				const app = getApp();
+				app.globalData.DB.selectAllBill().then(res => {
+					this.bills = res;
+				}).catch(error => {
+					uni.showModal({
+						title: '报错',
+						content: '加载数据库出错: \n' + JSON.stringify(error),
+						showCancel: false,
+					})
+				})
+			},
+			addNewBill(event) {
+				uni.navigateTo({
+					url: '../createNewBill/createNewBill'
+				})
+			},
+			uniListHangdler(e) {
+				console.log(e);
+				if (e.target && e.target.matches('img')) {
+					console.log(e.target);
+				}
+			}
 		}
 	}
 </script>
 
-<style>
-	.add-new-bill {
-		position: absolute;
-		bottom: 0;
-		width: 100%;
-	}
-
-	.bill {
-		display: flex;
-		flex-direction: row;
-		padding: 20upx 0;
-		height: 200upx;
-		justify-content: center;
-		align-items: center;
-		align-content: center;
-	}
-
-	.bill image {
-		height: 100%;
-	}
-
-	.bill-info {
-		display: flex;
-		flex-direction: column;
-	}
-
+<style lang="scss" scoped>
 	.bill-list {
-		background-color: #4CD964;
-		width: 100%;
+		position: absolute;
+		top: 80rpx;
+		left: 0;
+		bottom: 60upx;
 	}
 
 	#bill-search-btn {
@@ -86,5 +152,32 @@
 		width: 100%;
 		height: 80rpx;
 		padding-left: 20upx;
+	}
+
+	.slide {
+		white-space: nowrap;
+		width: max-content;
+		display: flex;
+		align-items: center;
+		overflow-x: hidden;
+
+		.slide-index {
+			// display: inline-block;
+			width: 100vw;
+		}
+
+		.operation {
+			// width: 314rpx;
+			// display: inline-block;
+
+			>view {
+				display: flex;
+				flex-direction: row;
+				justify-content: center;
+				align-items: center;
+				align-content: center;
+				margin-left: 20upx;
+			}
+		}
 	}
 </style>

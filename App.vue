@@ -1,6 +1,12 @@
 <script>
+	import * as DB from './utils/db/dbApi.js'
 	export default {
 		onLaunch: function() {
+			if (!DB.isOpen()) {
+				DB.openSqlite();
+			}
+			DB.createBillsTable()
+				.catch(error => console.log(error));
 			console.log('App Launch')
 		},
 		onShow: function() {
@@ -8,10 +14,22 @@
 		},
 		onHide: function() {
 			console.log('App Hide')
+		},
+		globalData: {
+			DB: DB
 		}
 	}
 </script>
 
 <style>
 	/*每个页面公共css */
+	.tab-bar {
+		position: fixed;
+		bottom: 0;
+		width: 100vw;
+	}
+
+	.w-100vw {
+		width: 100vw;
+	}
 </style>
