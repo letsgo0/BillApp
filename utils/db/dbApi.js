@@ -31,9 +31,9 @@ function createBillsTable() {
 	return res;
 }
 
-function createBillTable(billId) {
+function createBillTable(billName) {
 	const sqlStr =
-		`create table if not exists bill_${billId}("id" INTEGER PRIMARY KEY AUTOINCREMENT,"name" TEXT,"amount" INTEGER)`;
+		`create table if not exists ${billName}("id" INTEGER PRIMARY KEY AUTOINCREMENT,"name" TEXT,"amount" INTEGER, "desc" TEXT);`;
 	const res = db.createTable(sqlStr)
 		.then(res => {
 			return {
@@ -63,14 +63,18 @@ function addBill(obj) {
 	const desc = obj.desc; //账簿描述
 	const imgPath = obj.imgPath; //账簿封面图片路径
 	const createdTime = (new Date()).toLocaleTimeString(); //创建时间
-	const sqlStr =
-		`insert into ${rootTable}(name,desc,imgPath,createdTime) values("${name}", "${desc}", "${imgPath}","${createdTime}")`;
-	// console.log('sqlStr');
-	// console.log(sqlStr);
-	const res = db.addRecord(sqlStr)
+	const sqlStr = [
+		`insert into ${rootTable}(name,desc,imgPath,createdTime) values("${name}", "${desc}", "${imgPath}","${createdTime}");`,
+		`select last_insert_rowid();`
+	]
+	const res = db.addRecord(sqlStr[0])
 		.then(res => {
-			console.log(res);
+			return db.selectRecord(sqlStr[1]);
+		})
+		.then(res => {
+			// console.log(res);
 			return {
+				rowId: res[0]["last_insert_rowid()"],
 				isSuccess: true,
 			}
 		})
@@ -95,10 +99,18 @@ function addBillRecord(obj) {
 	const tableName = obj.tableName; //账簿表名
 	const name = obj.name; //人名
 	const amount = obj.amount; //金额
-	const sqlStr = `insert into ${tableName}(name,amount) values("${name}", "${amount}")`;
-	const res = db.addRecord(sqlStr)
+	const desc = obj.desc; // 备注
+	const sqlStr = [`insert into ${tableName}(name,amount,desc) values("${name}", "${amount}", "${desc}");`,
+		`select last_insert_rowid();`
+	];
+	console.log(sqlStr);
+	const res = db.addRecord(sqlStr[0])
+		.then(res => {
+			return db.selectRecord(sqlStr[1]);
+		})
 		.then(res => {
 			return {
+				rowId: res[0]["last_insert_rowid()"],
 				isSuccess: true,
 			}
 		})
@@ -136,7 +148,10 @@ function selectBillRecordByName(tableName, name) {
 	return db.selectRecord(sqlStr);
 }
 // 分页查询
-function selectBillRecordByGroup() {}
+function selectBillAllRecords(billTableName) {
+	const sqlStr = `select * from ${billTableName};`;
+	return db.selectRecord(sqlStr);
+}
 
 function updateBill(bill) {
 	const id = bill.id;
@@ -145,7 +160,6 @@ function updateBill(bill) {
 	for (const key in bill) {
 		if (bill.hasOwnProperty(key)) {
 			strArr.push(`${key} = "${bill[key]}"`);
-			console.log('run here');
 		}
 	}
 	const sqlStr =
@@ -165,15 +179,25 @@ function updateBill(bill) {
 	return res;
 }
 
-function updateBillRecord(tableName, id, name, amount) {
-	const sqlStr = `update ${tableName} set name = "${name}", amount= "${amount}" where id = "${id}"`;
+function updateBillRecord(obj) {
+	const {
+		tableName,
+		id,
+		name,
+		amount,
+		desc,
+	} = obj;
+	const sqlStr = `update ${tableName} set name = "${name}", amount= "${amount}", desc = "${desc}" where id = "${id}"`;
+	console.log(sqlStr);
 	const res = db.updateRecord(sqlStr)
 		.then(res => {
+			console.log(res);
 			return {
 				isSuccess: true,
 			}
 		})
 		.catch(error => {
+			console.log(error);
 			return {
 				isSuccess: false
 			}
@@ -199,6 +223,7 @@ function deleteBill(id) {
 
 function deleteBillRecord(tableName, id) {
 	const sqlStr = `delete from ${tableName} where id = "${id}"`;
+	console.log(sqlStr);
 	const res = db.deleteBill(sqlStr)
 		.then(res => {
 			return {
@@ -206,6 +231,7 @@ function deleteBillRecord(tableName, id) {
 			}
 		})
 		.catch(error => {
+			console.log(error);
 			return {
 				isSuccess: false
 			}
@@ -232,7 +258,7 @@ export {
 	selectAllBill,
 	selectBillByName,
 	selectBillRecordByName,
-	selectBillRecordByGroup,
+	selectBillAllRecords,
 	updateBill,
 	updateBillRecord,
 	deleteBill,

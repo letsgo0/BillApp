@@ -1,22 +1,15 @@
 <template>
-	<view class="virtual-list" >
-						 <!-- 'height': listHeight + 'px', -->
+	<view class="virtual-list">
 		<scroll-view scroll-x="true" :style="{
 						 'width': visualWidth + 'px',
-						 'position': 'relative'
+						 'position': 'relative',
+						 'padding': padding
 					 }" @scroll="scrollHandler">
-			<view class="scroll-bar" :style="{
-					'width': wholeWidth + 'px',
-					'height': listHeight + 'px'
-				  }"></view>
-			<view class="list" :style="{
-					  'transform': `translateX(${offset}px)`
-				  }">
-				<view class="item-wrap" :style="{
-					'width': itemWidth + 'px'
-				}" v-for="item in visibleData" :key="item.id">
-					<slot :item="item"></slot>
-				</view>
+			<view class="scroll-bar" :style="{'width': wholeWidth + 'px','height': listHeight + 'px'}"></view>
+			<view class="list" :style="{'transform': `translateX(${offset}px)`}">
+				<template class="item-wrap" v-for="(item,index) in visibleData" :key="item.id">
+					<slot :item="item" :index="start + index"></slot>
+				</template>
 			</view>
 		</scroll-view>
 	</view>
@@ -26,11 +19,11 @@
 	export default {
 		name: 'VirtualList',
 		props: {
+			padding: String,
 			// 所有的items
 			items: {
 				type: Array,
 				required: true,
-				default: []
 			},
 			// 可视区域的item数量
 			visualCount: Number,
@@ -47,18 +40,23 @@
 				required: true,
 			},
 			// 列表高度
-			listHeight: Number,
+			listHeight: {
+				type: Number,
+				required: true
+			},
 		},
 		data() {
 			return {
 				// 起始
 				start: 0,
-				end: Math.min(0 + this.visualCount + this.nextCount, this.items.length),
 				// list 偏移量
 				offset: 0,
 			}
 		},
 		computed: {
+			end() {
+				Math.min(this.start + this.prevCount + this.visualCount + this.nextCount, this.items.length)
+			},
 			// 可视区域的item
 			visibleData() {
 				return this.items.slice(this.start, this.end);
@@ -76,18 +74,17 @@
 			// 该函数在模拟机中的窗口在离开手指后惯性划动时并不会响应
 			// 在一台真机上是会响应的，丝滑
 			scrollHandler(ev) {
-				console.log(ev.detail);
+				// console.log(ev.detail);
 				const scrollLeft = ev.detail.scrollLeft;
 				let start = Math.floor(scrollLeft / this.itemWidth); // 此时的start为视图窗口对应的item下标
 				// console.log(start);
-				let end = start + this.visualCount + this.nextCount;
-				end = Math.min(end, this.items.length);
+				// let end = start + this.visualCount + this.nextCount;
+				// end = Math.min(end, this.items.length);
 				const dis = Math.min(start, this.prevCount);
 				// console.log(dis);
 				const offset = scrollLeft - (scrollLeft % this.itemWidth) - dis * this.itemWidth;
 				start = Math.max(start - this.prevCount, 0); //此时的start是算上顶部预留的item数后的下标
 				this.start = start;
-				this.end = end;
 				this.offset = offset;
 				// console.log('scrollLeft: ' + scrollLeft);
 				// console.log(`scrollLeft % this.itemWidth = ${scrollLeft} % ${this.itemWidth} = ${scrollLeft % this.itemWidth}`);
@@ -106,6 +103,8 @@
 		left: 0;
 		display: flex;
 		flex-direction: row;
+		flex-wrap: nowrap;
+		align-items: flex-start;
 		// overflow-x: ;
 		// scroll-behavior: unset;
 	}

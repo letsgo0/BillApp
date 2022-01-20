@@ -86,11 +86,9 @@
 				})
 			},
 			formSubmit: function(e) {
-				const that = this;
 				this.isLoading = true;
 				let checkRes = true;
 				let errorInfo = "";
-				console.log("this.$refs.imgFiles: " + JSON.stringify(this.$refs.imgFiles));;
 				if (e.detail.value.name == "") {
 					checkRes = false;
 					errorInfo = "添加失败，原因可能为：\n1.未填写账簿名字"
@@ -111,7 +109,7 @@
 				if (this.$refs.imgFiles.filesList.length == 0) {
 					promise = new Promise((res, rej) => {
 						res({
-							imgPath: that.imgDefaultPath
+							imgPath: this.imgDefaultPath
 						});
 					});
 				} else {
@@ -124,63 +122,55 @@
 					// // 存入数据库
 					const form = e.detail.value;
 					const bill = {
-						id: that.param.id,
+						id: this.param.id,
 						name: form.name,
 						desc: form.desc,
 						imgPath: imgPath,
 					};
-					console.log(that.fromFlag);
-					console.log(that.enumFrom);
-					if (that.fromFlag === that.enumFrom['ADD']) {
-						console.log('add');
+					if (this.fromFlag === this.enumFrom['ADD']) {
+						console.log('add Bill');
 						return getApp().globalData.DB.addBill(bill);
 					} else {
-						console.log('edit');
+						console.log('edit bill');
 						return getApp().globalData.DB.updateBill(bill);
 					}
 				}).then(res => {
-					let title = "";
-					if (that.fromFlag === that.enumFrom['ADD']) {
-						title = "添加成功"
+					this.isLoading = false;
+					if (res.isSuccess) {
+						let title = "";
+						if (this.fromFlag === this.enumFrom['ADD']) {
+							title = "添加成功";
+							// 添加子表
+							const id = res.rowId;
+							getApp().globalData.DB.createBillTable(`bill_${id}`);
+						} else {
+							title = "修改成功"
+						}
+						uni.showToast({
+							mask: true,
+							title: title,
+						})
+						const pages = getCurrentPages();
+						const prevPage = pages[pages.length - 2];
+						prevPage.$vm.loadBillsList();
+						uni.navigateBack({});
 					} else {
-						title = "修改成功"
+						uni.showModal({
+							showCancel: false,
+							confirmColor: '#DD524D',
+							content: '添加失败'
+						})
 					}
-					this.isLoading = false;
-					uni.showToast({
-						mask: true,
-						title: title,
-					})
-					const pages = getCurrentPages();
-					const prevPage = pages[pages.length - 2];
-					prevPage.$vm.loadBillsList();
-					uni.navigateBack({});
-				}).catch(error => {
-					console.log("error: " + JSON.stringify(error));
-					this.isLoading = false;
-					uni.showModal({
-						showCancel: false,
-						confirmColor: '#DD524D',
-						content: '添加失败'
-					})
-				});
+				})
 			},
 			formReset: function(e) {
 				this.$refs.imgFiles.clearFiles();
-			},
-			upSel(e) {
-				console.log('select');
-			},
-			upSuc(e) {
-				console.log("success");
-			},
-			upFail(e) {
-				console.log('fail');
 			}
 		}
 	}
 </script>
 
-<style  scoped>
+<style scoped>
 	.uni-form-item__title {
 		font-size: 16px;
 		line-height: 24px;
@@ -216,6 +206,7 @@
 	.imgInit {
 		width: 200upx;
 	}
+
 	.test {
 		background-color: #18BC37;
 	}

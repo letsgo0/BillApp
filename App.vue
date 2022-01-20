@@ -23,6 +23,9 @@
 
 <style>
 	/*每个页面公共css */
+	* {
+		box-sizing: border-box;
+	}
 	.tab-bar {
 		position: fixed;
 		bottom: 0;

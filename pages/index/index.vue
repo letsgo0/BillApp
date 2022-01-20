@@ -54,8 +54,24 @@
 					url: url,
 				})
 			},
+			loadBillsList() {
+				const app = getApp();
+				app.globalData.DB.selectAllBill().then(res => {
+					this.bills = res;
+				}).catch(error => {
+					uni.showModal({
+						title: '报错',
+						content: '加载数据库出错: \n' + JSON.stringify(error),
+						showCancel: false,
+					})
+				})
+			},
+			addNewBill(event) {
+				uni.navigateTo({
+					url: '../createNewBill/createNewBill'
+				})
+			},
 			deleteBill(index) {
-				const that = this;
 				uni.showModal({
 					showCancel: true,
 					title: '警告',
@@ -68,25 +84,33 @@
 						if (!res.confirm) return;
 						getApp().globalData.DB.deleteBill(this.bills[index].id)
 							.then(res => {
-								// console.log(res);
-								that.loadBillsList();
-							})
-							.catch(error => {
-								// console.log(error);
+								console.log(res);
+								if (res.isSuccess) {
+									this.loadBillsList();
+									uni.showToast({
+										mask: true,
+										title: '删除成功',
+									})
+								} else {
+									uni.showModal({
+										showCancel: false,
+										confirmColor: '#DD524D',
+										content: '删除失败'
+									})
+								}
 							})
 					}
 				})
 			},
 			touchStart(index, e) {
-				const that = this;
-				this.isdrag = true;
-				const view = uni.createSelectorQuery().in(this).select(".operation");
+				const view = uni.createSelectorQuery().select(".operation");
 				view.boundingClientRect(data => {
-					that.translateXRange = {
+					this.translateXRange = {
 						min: -(data.width),
 						max: 0
 					};
 				}).exec();
+				this.isdrag = true;
 				this.bills[index].translateX = this.bills[index].translateX ?? 0; // 添加属性
 				this.initTranslateX = this.bills[index].translateX;
 				this.initPageX = e.touches[0].pageX;
@@ -111,29 +135,6 @@
 					}
 				}
 			},
-			loadBillsList() {
-				const app = getApp();
-				app.globalData.DB.selectAllBill().then(res => {
-					this.bills = res;
-				}).catch(error => {
-					uni.showModal({
-						title: '报错',
-						content: '加载数据库出错: \n' + JSON.stringify(error),
-						showCancel: false,
-					})
-				})
-			},
-			addNewBill(event) {
-				uni.navigateTo({
-					url: '../createNewBill/createNewBill'
-				})
-			},
-			uniListHangdler(e) {
-				console.log(e);
-				if (e.target && e.target.matches('img')) {
-					console.log(e.target);
-				}
-			}
 		}
 	}
 </script>

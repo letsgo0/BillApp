@@ -76,6 +76,7 @@ function addRecord(sqlStr) {
 //第一个参数为表格名，aa,bb分别为列名和列的值 ， cc,dd同前面
 //传的参数按1,3,5来传，传一个，传三个，传五个参数，不能只传两个或者四个
 function selectRecord(strSql) {
+	console.log(strSql);
 	return new Promise((resolve, reject) => {
 		plus.sqlite.selectSql({
 			name: dbName,
