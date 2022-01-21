@@ -1,26 +1,35 @@
 <template>
 	<view class="">
-		<input id="bill-record-search" placeholder="输入名字搜索" type="text" value="" />
+		<uni-search-bar id="record-search-btn" placeholder="输入名字搜索" v-model="searchKey" clearButton="auto"
+			cancelButton="none" />
 		<!-- 左右划动 -->
 		<view class="bill-record-container">
-			<template v-if="billRecords.length">
-				<vt-list-x :items="billRecords" :visualCount="visualCount" :listHeight="listHeight"
-					:itemWidth="itemWidth" :prevCount="10" :nextCount="10" :padding="padding">
+			<template v-if="recordsShown.length">
+				<view class="title" :style="{
+					width: `${titleWidth}px`
+				}">
+					<view class="name"><text>姓名</text></view>
+					<view class="amount"><text>金额</text></view>
+					<view class="desc"><text>备注</text></view>
+					<view class="page"><text>页数</text></view>
+				</view>
+				<vt-list-x :items="recordsShown" :visualCount="visualCount" :listHeight="listHeight"
+					:itemWidth="itemWidth" :prevCount="10" :nextCount="10">
 					<template v-slot:default="slotProps">
 						<view class="slide" @touchstart="touchStart(slotProps.index,$event)"
 							@touchend="touchEnd(slotProps.index,$event)" @touchmove="touchMove(slotProps.index,$event)"
 							:style="{
-							transform:`translateY(${billRecords[slotProps.index]?.translateY || 0}px`,
+							transform:`translateY(${recordsShown[slotProps.index]?.translateY || 0}px`,
 							width: itemWidth + 'px'
 						}">
 							<view class="slide-index">
-								<text class="name">{{slotProps.item.name }}</text>
-								<text class="amount">{{slotProps.item.amount }}</text>
-								<text class="desc">{{slotProps.item.desc }}</text>
+								<view class="name"><text>{{slotProps.item.name }}</text></view>
+								<view class="amount"><text>{{slotProps.item.amount }}</text></view>
+								<view class="desc"><text>{{slotProps.item.desc || '' }}</text></view>
 							</view>
 							<view class="operation">
 								<text @click="editBillRecord(slotProps.index)" class="edit">修改</text>
-								<text @click="deleteBillRecord(+billRecords[slotProps.index].id)"
+								<text @click="deleteBillRecord(+recordsShown[slotProps.index].id)"
 									class="delete">删除</text>
 							</view>
 						</view>
@@ -47,7 +56,7 @@
 				itemWidth: 30,
 				listHeight: 0,
 				visualCount: 0,
-				paddingLR: 5,
+				titleWidth: 30,
 				isDrag: false,
 				translateYRange: {
 					min: 0,
@@ -55,24 +64,28 @@
 				},
 				initTranslateY: 0,
 				initPageY: 0,
-				tableName: ''
+				tableName: '',
+				searchKey: '',
 			}
 		},
 		computed: {
-			padding() {
-				return '0 ' + this.paddingLR + 'px';
+			// 过滤之后用于展示的列表
+			recordsShown() {
+				if (this.searchKey == '')
+					return this.billRecords;
+				else
+					return this.billRecords.filter(record => record.name.match(this.searchKey + ''))
 			}
 		},
 		onLoad(params) {
 			console.log(params);
 			this.tableName = `bill_${params.billId}`;
 			this.loadAllRecords();
-			const that = this;
 			const sys = uni.getSystemInfo({
-				success(data) {
-					const width = data.safeArea.width - 2 * that.paddingLR;
-					that.visualCount = Math.ceil(width / that.itemWidth);
-					console.log('visualCount = ' + that.visualCount);
+				success: (data) => {
+					const width = data.safeArea.width - this.titleWidth;
+					this.visualCount = Math.ceil(width / this.itemWidth);
+					console.log('visualCount = ' + this.visualCount);
 				}
 			})
 		},
@@ -108,7 +121,7 @@
 					amount,
 					desc,
 					id
-				} = this.billRecords[index];
+				} = this.recordsShown[index];
 				const url =
 					`../createNewBillDetail/createNewBillDetail?tableName=${this.tableName}&id=${id}&name=${name}&amount=${amount}&desc=${desc}`
 				uni.navigateTo({
@@ -161,15 +174,15 @@
 					};
 				}).exec();
 				this.isDrag = true;
-				this.billRecords[index].translateY = this.billRecords[index].translateY ?? 0; // 添加属性
-				this.initTranslateY = this.billRecords[index].translateY;
+				this.recordsShown[index].translateY = this.recordsShown[index].translateY ?? 0; // 添加属性
+				this.initTranslateY = this.recordsShown[index].translateY;
 				this.initPageY = event.touches[0].pageY;
 			},
 			touchEnd(index, event) {
-				if (this.billRecords[index].translateY > this.initTranslateY - 20) {
-					this.billRecords[index].translateY = this.translateYRange.max;
+				if (this.recordsShown[index].translateY > this.initTranslateY - 20) {
+					this.recordsShown[index].translateY = this.translateYRange.max;
 				} else {
-					this.billRecords[index].translateY = this.translateYRange.min;
+					this.recordsShown[index].translateY = this.translateYRange.min;
 				}
 				this.isdrag = false;
 			},
@@ -177,11 +190,11 @@
 				if (this.isDrag) {
 					const newTranslateY = this.initTranslateY + event.touches[0].pageY - this.initPageY;
 					if (newTranslateY < this.translateYRange.min) {
-						this.billRecords[index].translateY = this.translateYRange.min;
+						this.recordsShown[index].translateY = this.translateYRange.min;
 					} else if (newTranslateY > this.translateYRange.max) {
-						this.billRecords[index].translateY = this.translateYRange.max;
+						this.recordsShown[index].translateY = this.translateYRange.max;
 					} else {
-						this.billRecords[index].translateY = newTranslateY;
+						this.recordsShown[index].translateY = newTranslateY;
 					}
 				}
 			},
@@ -190,23 +203,45 @@
 </script>
 
 <style lang="scss" scoped>
-	#bill-record-search {
-		background-color: #18BC37;
-		color: #2C405A;
-		width: 100%;
-		height: 100rpx;
-	}
-
 	.bill-record-container {
 		width: 100%;
-		// height: 800rpx;
+		display: flex;
 		background-color: #C0C0C0;
-		// padding-left: 100rpx;
+		flex-direction: row;
+		flex-wrap: nowrap;
+
+		.title {
+			width: 30px;
+
+			.name {
+				height: 100px;
+				background-color: #C0C0C0;
+				// overflow-y: auto;
+			}
+
+			.amount {
+				height: 50px;
+				background-color: #F0AD4E;
+				// overflow-y: auto;
+			}
+
+			.desc {
+				height: 250px;
+				background-color: #18BC37;
+				// overflow-y: auto;
+			}
+
+			.page {
+				height: 40px;
+				background-color: #2979FF;
+			}
+		}
 
 		.slide,
 		.slide-index,
 		.slide-index>text,
-		.operation {
+		.operation,
+		.title {
 			display: flex;
 			flex-direction: column;
 			flex-wrap: nowrap;
@@ -238,7 +273,13 @@
 					background-color: #18BC37;
 					// overflow-y: auto;
 				}
+
+				.page {
+					height: 40px;
+					background-color: #2979FF;
+				}
 			}
+
 
 			.edit {
 				background-color: #18BC37;
@@ -248,5 +289,15 @@
 				background-color: #DD524D;
 			}
 		}
+	}
+
+	.name,
+	.amount,
+	.desc,
+	.page {
+		display: flex;
+		flex-direction: column;
+		justify-content: center;
+		width: 100%;
 	}
 </style>

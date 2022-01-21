@@ -3,7 +3,6 @@
 		<scroll-view scroll-x="true" :style="{
 						 'width': visualWidth + 'px',
 						 'position': 'relative',
-						 'padding': padding
 					 }" @scroll="scrollHandler">
 			<view class="scroll-bar" :style="{'width': wholeWidth + 'px','height': listHeight + 'px'}"></view>
 			<view class="list" :style="{'transform': `translateX(${offset}px)`}">
@@ -19,7 +18,6 @@
 	export default {
 		name: 'VirtualList',
 		props: {
-			padding: String,
 			// 所有的items
 			items: {
 				type: Array,

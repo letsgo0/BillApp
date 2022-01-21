@@ -1,10 +1,10 @@
 <template>
 	<view class="content">
-		<input id="bill-search-btn" placeholder="账簿搜索框" type="text" value="" />
+		<uni-search-bar placeholder="账簿搜索框" v-model="searchKey" clearButton="auto" cancelButton="none" />
 		<scroll-view scroll-y="true" class="bill-list">
 			<view>
 				<uni-list id="bill-list">
-					<template v-for="(bill,index) in bills" :key="bill.id">
+					<template v-for="(bill,index) in billsShown" :key="bill.id">
 						<view class="slide" @touchstart="touchStart(index,$event)" @touchend="touchEnd(index,$event)"
 							@touchmove="touchMove(index,$event)"
 							:style="{transform:'translateX(' + bill.translateX + 'px)'}">
@@ -39,6 +39,16 @@
 				initTranslateX: 0,
 				initPageX: 0,
 				imgDefaultPath: '/static/logo.png',
+				searchKey: '',
+			}
+		},
+		computed: {
+			// 过滤之后用于展示的列表
+			billsShown() {
+				if (this.searchKey == '')
+					return this.bills;
+				else
+					return this.bills.filter(bill => bill.name.match(this.searchKey + ''))
 			}
 		},
 		onLoad() {
@@ -145,14 +155,6 @@
 		top: 80rpx;
 		left: 0;
 		bottom: 60upx;
-	}
-
-	#bill-search-btn {
-		background-color: #C0C0C0;
-		color: #2C405A;
-		width: 100%;
-		height: 80rpx;
-		padding-left: 20upx;
 	}
 
 	.slide {
