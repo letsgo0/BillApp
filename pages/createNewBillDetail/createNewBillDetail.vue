@@ -1,29 +1,20 @@
 <template>
 	<form @submit="formSubmit" @reset="formReset">
-		<view class="uni-form-item uni-column">
-			<view class="uni-form-item__title">1.姓名(必填)!</view>
-			<view class="uni-input-wrapper">
-				<input class="uni-input" focus name="name" placeholder="请输入姓名!" placeholder-style="color:#F76260"
-					v-model="param.name" />
-			</view>
-		</view>
-		<view class="uni-form-item uni-column">
-			<view class="uni-form-item__title">2.金额(必填)</view>
-			<view class="uni-input-wrapper">
-				<input class="uni-input" name="amount" v-model="param.amount" placeholder="请输入金额!"
-					placeholder-style="color:#F76260" />
-			</view>
-		</view>
-		<view class="uni-form-item uni-column ">
-			<view class="uni-form-item__title">3.备注(选填)</view>
-			<view class="uni-input-wrapper">
-				<input class="uni-input" name="desc" v-model="param.desc" placeholder="请输入备注[选填]!"
-					placeholder-style="color:#F76260" />
-			</view>
-		</view>
-		<view class="uni-btn-v">
+		<uni-section title="姓名(必填)" type="line" padding>
+			<uni-easyinput name="name" v-model="param.name" placeholder="请输入姓名!"
+				placeholder-style="color:#F76260"  trim="all"></uni-easyinput>
+		</uni-section>
+		<uni-section title="金额(必填)" type="line" padding>
+			<uni-easyinput name="amount" v-model="param.amount" placeholder="请输入金额!"
+				placeholder-style="color:#F76260"  trim="all"></uni-easyinput>
+		</uni-section>
+		<uni-section title="备注(可选)" type="line" padding>
+			<uni-easyinput name="desc" v-model="param.desc" placeholder="请输入备注!"
+				placeholder-style="color:#F76260"  trim="all"></uni-easyinput>
+		</uni-section>
+		<view class="tab-bar">
 			<button form-type="submit" type="primary" :loading="isLoading"> {{btnMainText}}</button>
-			<button form-type="reset" type="default">重置</button>
+			<button form-type="reset" type="warn">重置</button>
 		</view>
 	</form>
 </template>

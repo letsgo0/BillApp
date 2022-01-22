@@ -1,22 +1,15 @@
 <template>
 	<view class="container">
 		<form @submit="formSubmit" @reset="formReset">
-			<view class="uni-form-item uni-column">
-				<view class="uni-form-item__title">1.账簿名字(必填)</view>
-				<view class="uni-input-wrapper">
-					<input class="uni-input" focus name="name" placeholder="请输入账簿名字!" placeholder-style="color:#F76260"
-						v-model="param.name" />
-				</view>
-			</view>
-			<view class="uni-form-item uni-column">
-				<view class="uni-form-item__title">2.账簿描述(选填)</view>
-				<view class="uni-input-wrapper">
-					<input class="uni-input" name="desc" v-model="param.desc" placeholder="请输入账簿描述!"
-						placeholder-style="color:#F76260" />
-				</view>
-			</view>
-			<view class="uni-form-item uni-column">
-				<view class="uni-form-item__title">3.账簿封面(选填)</view>
+			<uni-section title="账簿名字(必填)" type="line" padding>
+				<uni-easyinput name="name" v-model="param.name" placeholder="请输入账簿名字!"
+					placeholder-style="color:#F76260"  trim="all"></uni-easyinput>
+			</uni-section>
+			<uni-section title="账簿描述(可选)" type="line" padding>
+				<uni-easyinput name="desc" v-model="param.desc" placeholder="请输入账簿描述!"
+					placeholder-style="color:#F76260"  trim="all"></uni-easyinput>
+			</uni-section>
+			<uni-section title="账簿封面(可选)" type="line" padding>
 				<view class="img">
 					<view>
 						<view v-if="imgDefaultPath==''">
@@ -26,13 +19,13 @@
 							<image class="imgInit" :src="imgDefaultPath" mode="aspectFit" lazy-load="true"></image>
 						</view>
 					</view>
-					<view class="uni-input-wrapper upload-img test">
+					<view class="uni-input-wrapper upload-img">
 						<uni-file-picker ref="imgFiles" file-mediatype="image" :limit="1" :auto-upload="false"
 							mode="grid">
 						</uni-file-picker>
 					</view>
 				</view>
-			</view>
+			</uni-section>
 			<view class="tab-bar">
 				<button type="primary" form-type="submit" :loading="isLoading">{{btnMainText}}</button>
 				<button type="warn" form-type="reset">重置</button>
@@ -171,43 +164,15 @@
 </script>
 
 <style scoped>
-	.uni-form-item__title {
-		font-size: 16px;
-		line-height: 24px;
-	}
-
-	.uni-input-wrapper {
-		/* #ifndef APP-NVUE */
-		/* display: flex; */
-		/* #endif */
-		padding: 8px 13px;
-		/* flex-direction: row; */
-		/* flex-wrap: nowrap; */
-		background-color: #FFFFFF;
-		box-sizing: border-box;
-	}
-
-	.uni-input {
-		height: 28px;
-		line-height: 28px;
-		font-size: 15px;
-		padding: 0px;
-		flex: 1;
-		background-color: #FFFFFF;
-	}
-
 	.img {
 		display: flex;
 		flex-direction: row;
 		justify-content: center;
-		align-items: center;
+		align-items: flex-start;
 	}
 
 	.imgInit {
-		width: 200upx;
-	}
-
-	.test {
-		background-color: #18BC37;
+		height: 180upx;
+		width: 180upx;
 	}
 </style>

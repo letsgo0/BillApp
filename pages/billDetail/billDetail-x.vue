@@ -3,42 +3,38 @@
 		<uni-search-bar id="record-search-btn" placeholder="输入名字搜索" v-model="searchKey" clearButton="auto"
 			cancelButton="none" />
 		<!-- 左右划动 -->
-		<view class="bill-record-container">
-			<template v-if="recordsShown.length">
-				<view class="title" :style="{
+		<view v-if="recordsShown?.length > 0" class="bill-record-container">
+			<view class="title" :style="{
 					width: `${titleWidth}px`
 				}">
-					<view class="name"><text>姓名</text></view>
-					<view class="amount"><text>金额</text></view>
-					<view class="desc"><text>备注</text></view>
-					<view class="page"><text>页数</text></view>
-				</view>
-				<vt-list-x :items="recordsShown" :visualCount="visualCount" :listHeight="listHeight"
-					:itemWidth="itemWidth" :prevCount="10" :nextCount="10">
-					<template v-slot:default="slotProps">
-						<view class="slide" @touchstart="touchStart(slotProps.index,$event)"
-							@touchend="touchEnd(slotProps.index,$event)" @touchmove="touchMove(slotProps.index,$event)"
-							:style="{
+				<view class="name"><text>姓名</text></view>
+				<view class="amount"><text>金额</text></view>
+				<view class="desc"><text>备注</text></view>
+			</view>
+			<vt-list-x :items="recordsShown" :visualCount="visualCount" :listHeight="listHeight" :itemWidth="itemWidth"
+				:prevCount="10" :nextCount="10">
+				<template v-slot:default="slotProps">
+					<view class="slide" @touchstart="touchStart(slotProps.index,$event)"
+						@touchend="touchEnd(slotProps.index,$event)" @touchmove="touchMove(slotProps.index,$event)"
+						:style="{
 							transform:`translateY(${recordsShown[slotProps.index]?.translateY || 0}px`,
 							width: itemWidth + 'px'
 						}">
-							<view class="slide-index">
-								<view class="name"><text>{{slotProps.item.name }}</text></view>
-								<view class="amount"><text>{{slotProps.item.amount }}</text></view>
-								<view class="desc"><text>{{slotProps.item.desc || '' }}</text></view>
-							</view>
-							<view class="operation">
-								<text @click="editBillRecord(slotProps.index)" class="edit">修改</text>
-								<text @click="deleteBillRecord(+recordsShown[slotProps.index].id)"
-									class="delete">删除</text>
-							</view>
+						<view class="slide-index">
+							<view class="name"><text>{{slotProps.item.name }}</text></view>
+							<view class="amount"><text>{{slotProps.item.amount }}</text></view>
+							<view class="desc"><text>{{slotProps.item.desc || '' }}</text></view>
 						</view>
-					</template>
-				</vt-list-x>
-			</template>
-			<view v-else class="">
-				<text>啥都没有</text>
-			</view>
+						<view class="operation">
+							<text @click="editBillRecord(slotProps.index)" class="edit">修改</text>
+							<text @click="deleteBillRecord(+recordsShown[slotProps.index].id)" class="delete">删除</text>
+						</view>
+					</view>
+				</template>
+			</vt-list-x>
+		</view>
+		<view v-else style="display: flex; justify-content: center; align-items: center;align-content: center;">
+			<text>啥都没有</text>
 		</view>
 		<button @click="addBillRecord" class="tab-bar" type="warn">新增记录</button>
 	</view>
@@ -53,10 +49,10 @@
 		data() {
 			return {
 				billRecords: [],
-				itemWidth: 30,
+				itemWidth: 50,
 				listHeight: 0,
 				visualCount: 0,
-				titleWidth: 30,
+				titleWidth: 40,
 				isDrag: false,
 				translateYRange: {
 					min: 0,
@@ -203,39 +199,17 @@
 </script>
 
 <style lang="scss" scoped>
+	$nameHeight: 150px;
+	$amountHeight: 80px;
+	$descHeight: 300px;
+
 	.bill-record-container {
 		width: 100%;
 		display: flex;
-		background-color: #C0C0C0;
+		// background-color: #C0C0C0;
 		flex-direction: row;
 		flex-wrap: nowrap;
 
-		.title {
-			width: 30px;
-
-			.name {
-				height: 100px;
-				background-color: #C0C0C0;
-				// overflow-y: auto;
-			}
-
-			.amount {
-				height: 50px;
-				background-color: #F0AD4E;
-				// overflow-y: auto;
-			}
-
-			.desc {
-				height: 250px;
-				background-color: #18BC37;
-				// overflow-y: auto;
-			}
-
-			.page {
-				height: 40px;
-				background-color: #2979FF;
-			}
-		}
 
 		.slide,
 		.slide-index,
@@ -257,26 +231,21 @@
 
 			.slide-index {
 				.name {
-					height: 100px;
+					height: $nameHeight;
 					background-color: #C0C0C0;
 					// overflow-y: auto;
 				}
 
 				.amount {
-					height: 50px;
+					height: $amountHeight;
 					background-color: #F0AD4E;
 					// overflow-y: auto;
 				}
 
 				.desc {
-					height: 250px;
+					height: $descHeight;
 					background-color: #18BC37;
 					// overflow-y: auto;
-				}
-
-				.page {
-					height: 40px;
-					background-color: #2979FF;
 				}
 			}
 
@@ -289,15 +258,38 @@
 				background-color: #DD524D;
 			}
 		}
+
+		.title {
+			justify-content: center;
+			
+			.name {
+				height: $nameHeight;
+				background-color: #C0C0C0;
+				// overflow-y: auto;
+			}
+
+			.amount {
+				height: $amountHeight;
+				background-color: #F0AD4E;
+				// overflow-y: auto;
+			}
+
+			.desc {
+				height: $descHeight;
+				background-color: #18BC37;
+				// overflow-y: auto;
+			}
+		}
 	}
 
 	.name,
 	.amount,
-	.desc,
-	.page {
+	.desc {
 		display: flex;
 		flex-direction: column;
 		justify-content: center;
+		align-items: center;
+		align-content: center;
 		width: 100%;
 	}
 </style>

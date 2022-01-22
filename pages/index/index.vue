@@ -2,7 +2,7 @@
 	<view class="content">
 		<uni-search-bar placeholder="账簿搜索框" v-model="searchKey" clearButton="auto" cancelButton="none" />
 		<scroll-view scroll-y="true" class="bill-list">
-			<view>
+			<view v-if="billsShown?.length > 0">
 				<uni-list id="bill-list">
 					<template v-for="(bill,index) in billsShown" :key="bill.id">
 						<view class="slide" @touchstart="touchStart(index,$event)" @touchend="touchEnd(index,$event)"
@@ -20,6 +20,9 @@
 						</view>
 					</template>
 				</uni-list>
+			</view>
+			<view v-else style="display: flex; justify-content: center; align-items: center;align-content: center;">
+				<text>啥都没有</text>
 			</view>
 		</scroll-view>
 		<button @click="addNewBill" class="tab-bar" type="warn">添加新账簿</button>
