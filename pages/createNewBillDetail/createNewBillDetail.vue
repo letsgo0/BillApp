@@ -1,17 +1,34 @@
 <template>
 	<form @submit="formSubmit" @reset="formReset">
 		<uni-section title="姓名(必填)" type="line" padding>
-			<uni-easyinput name="name" v-model="param.name" placeholder="请输入姓名!"
-				placeholder-style="color:#F76260"  trim="all"></uni-easyinput>
+			<uni-easyinput name="name" v-model="param.name" placeholder="请输入姓名!" placeholder-style="color:#F76260"
+				trim="all"></uni-easyinput>
 		</uni-section>
 		<uni-section title="金额(必填)" type="line" padding>
-			<uni-easyinput name="amount" v-model="param.amount" placeholder="请输入金额!"
-				placeholder-style="color:#F76260"  trim="all"></uni-easyinput>
+			<uni-easyinput name="amount" v-model="param.amount" placeholder="请输入金额!" placeholder-style="color:#F76260"
+				trim="all"></uni-easyinput>
+			<my-voice :num="param.amount ?? ''" ref="myVoice">
+				<template v-slot:default="ret">
+					<uni-easyinput :value="ret.amountZH" disabled placeholder="上面的数字转为汉字"
+						placeholder-style="color:#F76260" trim="all">
+						<template v-slot:right>
+							<view @click="clickBtn" style="margin-right: 5px;">
+								<uni-icons v-if="ret.playStatus === enumPlayStatus['PLAY']" custom-prefix="my-icon"
+									type="myIcon-24gl-pauseCircle" size="30">
+								</uni-icons>
+								<uni-icons v-else custom-prefix="my-icon" type="myIcon-24gl-playCircle" size="30">
+								</uni-icons>
+							</view>
+						</template>
+					</uni-easyinput>
+				</template>
+			</my-voice>
 		</uni-section>
 		<uni-section title="备注(可选)" type="line" padding>
-			<uni-easyinput name="desc" v-model="param.desc" placeholder="请输入备注!"
-				placeholder-style="color:#F76260"  trim="all"></uni-easyinput>
+			<uni-easyinput name="desc" v-model="param.desc" placeholder="请输入备注!" placeholder-style="color:#F76260"
+				trim="all"></uni-easyinput>
 		</uni-section>
+
 		<view class="tab-bar">
 			<button form-type="submit" type="primary" :loading="isLoading"> {{btnMainText}}</button>
 			<button form-type="reset" type="warn">重置</button>
@@ -20,18 +37,33 @@
 </template>
 
 <script>
+	import myVoice from '/components/my-voice/my-voice.vue';
 	export default {
+		components: {
+			'my-voice': myVoice,
+		},
 		data() {
 			const enumFrom = {
 				'EDIT': 1,
 				'ADD': 2,
-			}
+			};
+			const enumPlayStatus = {
+				'PLAY': 0,
+				'PAUSE': 1,
+				'STOP': 2,
+			};
 			return {
 				isLoading: false,
-				param: {},
+				param: {
+					id: 0,
+					name: "",
+					amount: "",
+					desc: "",
+				},
 				enumFrom,
 				fromFlag: enumFrom['ADD'],
 				btnMainText: "创建",
+				enumPlayStatus,
 			}
 		},
 		// 接受两个参数
@@ -45,8 +77,10 @@
 				this.fromFlag = this.enumFrom['EDIT'];
 				this.btnMainText = "修改"
 			}
-			console.log(this.param);
 		},
+		// onHide() {
+		// 	this.stop();
+		// },
 		methods: {
 			formSubmit() {
 				this.isLoading = true;
@@ -95,6 +129,9 @@
 			},
 			formReset() {
 				console.log('reset');
+			},
+			clickBtn(){
+				this.$refs.myVoice.speakHandler();
 			}
 		}
 	}

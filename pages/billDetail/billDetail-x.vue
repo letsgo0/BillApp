@@ -7,9 +7,12 @@
 			<view class="title" :style="{
 					width: `${titleWidth}px`
 				}">
-				<view class="name"><text>姓名</text></view>
+				<!-- <view class="name"><text>姓名</text></view>
 				<view class="amount"><text>金额</text></view>
-				<view class="desc"><text>备注</text></view>
+				<view class="desc"><text>备注</text></view> -->
+				<text class="name">姓名</text>
+				<text class="amount">金额</text>
+				<text class="desc">备注</text>
 			</view>
 			<vt-list-x :items="recordsShown" :visualCount="visualCount" :listHeight="listHeight" :itemWidth="itemWidth"
 				:prevCount="10" :nextCount="10">
@@ -21,12 +24,15 @@
 							width: itemWidth + 'px'
 						}">
 						<view class="slide-index">
-							<view class="name"><text>{{slotProps.item.name }}</text></view>
+							<!-- <view class="name"><text>{{slotProps.item.name }}</text></view>
 							<view class="amount"><text>{{slotProps.item.amount }}</text></view>
-							<view class="desc"><text>{{slotProps.item.desc || '' }}</text></view>
+							<view class="desc"><text>{{slotProps.item.desc || '' }}</text></view> -->
+							<text class="name">{{slotProps.item.name }}</text>
+							<text class="amount">{{slotProps.item.amount }}</text>
+							<text class="desc">{{slotProps.item.desc || '' }}</text>
 						</view>
 						<view class="operation">
-							<text @click="editBillRecord(slotProps.index)" class="edit">修改</text>
+							<text @click="editBillRecord(slotProps.index)" class="edit">查看</text>
 							<text @click="deleteBillRecord(+recordsShown[slotProps.index].id)" class="delete">删除</text>
 						</view>
 					</view>
@@ -206,14 +212,11 @@
 	.bill-record-container {
 		width: 100%;
 		display: flex;
-		// background-color: #C0C0C0;
 		flex-direction: row;
 		flex-wrap: nowrap;
 
-
 		.slide,
 		.slide-index,
-		.slide-index>text,
 		.operation,
 		.title {
 			display: flex;
@@ -249,9 +252,14 @@
 				}
 			}
 
+			.edit,
+			.delete {
+				padding: 6px 0;
+				border-radius: 3px;
+			}
 
 			.edit {
-				background-color: #18BC37;
+				background-color: #e4cf57;
 			}
 
 			.delete {
@@ -261,7 +269,7 @@
 
 		.title {
 			justify-content: center;
-			
+
 			.name {
 				height: $nameHeight;
 				background-color: #C0C0C0;
@@ -284,12 +292,15 @@
 
 	.name,
 	.amount,
-	.desc {
+	.desc,
+	.edit,
+	.delete {
 		display: flex;
 		flex-direction: column;
 		justify-content: center;
 		align-items: center;
 		align-content: center;
 		width: 100%;
+		writing-mode: vertical-lr;
 	}
 </style>

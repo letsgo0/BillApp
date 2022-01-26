@@ -22,6 +22,7 @@
 </script>
 
 <style>
+	@import "@/static/iconfont.css";
 	/*每个页面公共css */
 	* {
 		box-sizing: border-box;

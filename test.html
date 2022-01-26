@@ -6,41 +6,28 @@
 		<title></title>
 		<style type="text/css">
 			.container {
-				width: 500px;
-				height: 500px;
-				overflow-y: scroll;
+				/* height: 500px; */
+				/* overflow-y: scroll; */
 				background-color: #2C405A;
-				margin: auto;
-				margin-top: 100px;
-				position: relative;
+				display: flex;
+				flex-direction: column;
+				align-items: center;
+				align-content: center;
 			}
 			.child {
-				width: 100%;
-				height: 8000px;
+				width: 100px;
 				background-color: #007AFF;
-			}
-			.child2{
-				position: absolute;
-				top: 0;
-				left: 0;
-				width: 100%;
-				height: 100%;
-				background-color: #D8D8D8;
+				word-wrap: break-word;
+				writing-mode:vertical-lr;
 			}
 		</style>
 	</head>
 	<body>
 	<div class="container">
-		<div class="child"></div>
-		<div class="child2"></div>
+		<span class="child">asdfasdf sad fads fsad fasdfsdfasdfsdfsaf</span>
+	</div>	
+	<div class="container">
+		<span class="child">撒旦发射点发生哥哥萨嘎Sega俺是个跟覅三分发觉死都发你哦对万佛而安佛奥欸四年</span>
 	</div>	
 	</body>
-	<script type="text/javascript">
-		const container = document.querySelector('.container');
-		const child2 = document.querySelector('.child2')
-		container.addEventListener('scroll', (e)=>{
-			console.log(e.target.scrollTop);
-			child2.style.cssText = `transform:translateY(${e.target.scrollTop}px);`;
-		},false)
-	</script>
 </html>
