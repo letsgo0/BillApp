@@ -28,7 +28,7 @@
 							<view class="amount"><text>{{slotProps.item.amount }}</text></view>
 							<view class="desc"><text>{{slotProps.item.desc || '' }}</text></view> -->
 							<text class="name">{{slotProps.item.name }}</text>
-							<text class="amount">{{slotProps.item.amount }}</text>
+							<text class="amount">{{slotProps.item.amountZH }}</text>
 							<text class="desc">{{slotProps.item.desc || '' }}</text>
 						</view>
 						<view class="operation">
@@ -48,6 +48,7 @@
 
 <script>
 	import vtListX from '/components/virtual-list/virtual-list-x.vue'
+	import * as AZH from '/utils/amoutZH/amoutZH.js'
 	export default {
 		components: {
 			'vt-list-x': vtListX,
@@ -104,7 +105,7 @@
 				const app = getApp();
 				app.globalData.DB.selectBillAllRecords(this.tableName)
 					.then(res => {
-						this.billRecords = res;
+						this.billRecords = res.map( item => {item.amountZH = AZH.num2ZH(item.amount).value; return item});
 						this.$nextTick(() => {
 							this.confirmHeight();
 						})
@@ -206,8 +207,8 @@
 
 <style lang="scss" scoped>
 	$nameHeight: 150px;
-	$amountHeight: 80px;
-	$descHeight: 300px;
+	$amountHeight: 400px;
+	$descHeight: 240px;
 
 	.bill-record-container {
 		width: 100%;
@@ -230,7 +231,7 @@
 
 		.slide {
 			height: 100%;
-			border: 1px solid red;
+			border-left: 2px dotted #808080;
 
 			.slide-index {
 				.name {
