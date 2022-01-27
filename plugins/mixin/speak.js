@@ -1,3 +1,4 @@
+import * as AZH from '/utils/amoutZH/amoutZH.js'
 const speak = {
 	data() {
 		const enumPlayStatus = {
@@ -6,7 +7,7 @@ const speak = {
 			'STOP': 2,
 		};
 		return {
-			num: '',
+			input: '',
 			enumPlayStatus,
 			playStatus: enumPlayStatus['STOP'],
 			amountZH: '',
@@ -18,8 +19,9 @@ const speak = {
 		};
 	},
 	watch: {
-		num: {
+		input: {
 			handler(val, oldVal) {
+				console.log('watch input changed');
 				this.stop();
 				this.isSpeakChanged = true;
 				// const numZH = '零一二三四五六七八九十';
@@ -55,6 +57,7 @@ const speak = {
 		this.innerAudioContext.loop = false;
 	},
 	onHide(){
+		console.log('hide');
 		this.stop();
 	},
 	methods: {
@@ -108,8 +111,11 @@ const speak = {
 		},
 		stop() {
 			console.log('stop');
-			this.innerAudioContext.stop();
+			this.innerAudioContext?.stop();
 			this.playStatus = this.enumPlayStatus['STOP'];
 		}
 	}
 }
+export {
+	speak,
+};

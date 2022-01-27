@@ -7,22 +7,18 @@
 		<uni-section title="金额(必填)" type="line" padding>
 			<uni-easyinput name="amount" v-model="param.amount" placeholder="请输入金额!" placeholder-style="color:#F76260"
 				trim="all"></uni-easyinput>
-			<my-voice :num="param.amount ?? ''" ref="myVoice">
-				<template v-slot:default="ret">
-					<uni-easyinput :value="ret.amountZH" disabled placeholder="上面的数字转为汉字"
-						placeholder-style="color:#F76260" trim="all">
-						<template v-slot:right>
-							<view @click="clickBtn" style="margin-right: 5px;">
-								<uni-icons v-if="ret.playStatus === enumPlayStatus['PLAY']" custom-prefix="my-icon"
-									type="myIcon-24gl-pauseCircle" size="30">
-								</uni-icons>
-								<uni-icons v-else custom-prefix="my-icon" type="myIcon-24gl-playCircle" size="30">
-								</uni-icons>
-							</view>
-						</template>
-					</uni-easyinput>
+			<uni-easyinput :value="amountZH" disabled placeholder="上面的数字转为汉字" placeholder-style="color:#F76260"
+				trim="all">
+				<template v-slot:right>
+					<view @click="speakHandler" style="margin-right: 5px;">
+						<uni-icons v-if="playStatus === enumPlayStatus['PLAY']" custom-prefix="my-icon"
+							type="myIcon-24gl-pauseCircle" size="30">
+						</uni-icons>
+						<uni-icons v-else custom-prefix="my-icon" type="myIcon-24gl-playCircle" size="30">
+						</uni-icons>
+					</view>
 				</template>
-			</my-voice>
+			</uni-easyinput>
 		</uni-section>
 		<uni-section title="备注(可选)" type="line" padding>
 			<uni-easyinput name="desc" v-model="param.desc" placeholder="请输入备注!" placeholder-style="color:#F76260"
@@ -37,20 +33,13 @@
 </template>
 
 <script>
-	import myVoice from '/components/my-voice/my-voice.vue';
+	import {speak} from '/plugins/mixin/speak.js'
 	export default {
-		components: {
-			'my-voice': myVoice,
-		},
+		mixins: [speak], 
 		data() {
 			const enumFrom = {
 				'EDIT': 1,
 				'ADD': 2,
-			};
-			const enumPlayStatus = {
-				'PLAY': 0,
-				'PAUSE': 1,
-				'STOP': 2,
 			};
 			return {
 				isLoading: false,
@@ -63,7 +52,14 @@
 				enumFrom,
 				fromFlag: enumFrom['ADD'],
 				btnMainText: "创建",
-				enumPlayStatus,
+			}
+		},
+		watch:{
+			'param.amount':{
+				handler(val,oldVal){
+					this.input = val;
+				},
+				immediate: true,
 			}
 		},
 		// 接受两个参数
@@ -78,9 +74,6 @@
 				this.btnMainText = "修改"
 			}
 		},
-		// onHide() {
-		// 	this.stop();
-		// },
 		methods: {
 			formSubmit() {
 				this.isLoading = true;
@@ -130,9 +123,6 @@
 			formReset() {
 				console.log('reset');
 			},
-			clickBtn(){
-				this.$refs.myVoice.speakHandler();
-			}
 		}
 	}
 </script>
