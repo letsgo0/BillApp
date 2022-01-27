@@ -14,34 +14,19 @@ const speak = {
 			innerAudioContext: null,
 			order: [],
 			isSpeakChanged: true,
-			vois: ['error', '0', '1', '2', '3', '4', '5', '6', '7', '8', '9', 'wan', 'qian', 'bai', 'shi', 'yuan'],
+			vois: ['error', '0', '1', '2', '3', '4', '5', '6', '7', '8', '9', 'yuan', 'shi', 'bai', 'qian', 'wan'],
 			mediaIndex: 0,
 		};
 	},
 	watch: {
 		input: {
 			handler(val, oldVal) {
-				console.log('watch input changed');
 				this.stop();
 				this.isSpeakChanged = true;
-				// const numZH = '零一二三四五六七八九十';
-				// const unitZH = ['十', '百', '千', '万']; //预计金额在一个亿以下
-				if (val) { // 
-					if (isNaN(val)) {
-						this.amountZH = "无法转换";
-						this.order = [0];
-					} else {
-						const res = AZH.num2ZH(val);
-						console.log(res);
-						if (res.isSuccess) {
-							this.amountZH = res.value;
-							this.order = res.order.map(x => x + 1);
-						}
-					}
-				} else {
-					this.amountZH = '';
-					this.order = [];
-				}
+				const res = AZH.num2ZH(val);
+				console.log(res);
+				this.amountZH = res.value;
+				this.order = res.order;
 			},
 			immediate: true
 		},
@@ -56,7 +41,7 @@ const speak = {
 		this.innerAudioContext.autoplay = false;
 		this.innerAudioContext.loop = false;
 	},
-	onHide(){
+	onHide() {
 		console.log('hide');
 		this.stop();
 	},

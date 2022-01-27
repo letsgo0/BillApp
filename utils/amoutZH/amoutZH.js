@@ -1,13 +1,20 @@
 // const numZH = '零一二三四五六七八九';
 // const unitZH = '十百千万'; //预计金额在一个亿以下
 const numZH = '零壹貳叁肆伍陆柒捌玖';
-const unitZH = ['仟万', '佰万', '拾万', '万', '仟', '佰', '拾', '元']; //预计金额在一个亿以下
+const unitZH = ['元', '拾', '佰', '仟', '万']; //预计金额在一个亿以下
 
 function num2ZH(num) {
+	if (!num) {
+		return {
+			value: "",
+			order: [],
+		}
+	}
 	num = Math.trunc(+num);
 	if (isNaN(num)) {
 		return {
-			isSuccess: false,
+			value: "无法转换",
+			order: [0],
 		}
 	}
 	num = num + '';
@@ -21,26 +28,34 @@ function num2ZH(num) {
 	// 转为中文
 	let numZHed = '';
 	let order = [];
-	// '零一二三四五六七八九十百千万元'  X
-	// '零一二三四五六七八九万千百十元' ✔
+	// vois: ['error', '0', '1', '2', '3', '4', '5', '6', '7', '8', '9', 'yuan', 'shi', 'bai', 'qian', 'wan']
 	const base = 10;
-	for (let i = 0; i < num.length; ++i) {
+	let i;
+	for (i = 0; i < num.length - 1; ++i) {
 		const index = +num[i];
-		// unitZH.length - x == num.length - i
-		// ==> x = unitZH.length - num.length + i;
-		const x = unitZH.length - num.length + i;
-		numZHed += numZH[index] + unitZH[x];
-		order.push(index);
-		if(x < 3){
-			order.push(x + 1 + base);
-			order.push(0 + base);
-		}else{
-			order.push(x - 3 + base);
+		numZHed += numZH[index];
+		let x = num.length - i; // 第几位，从1开始
+		order.push(index + 1);
+		if (x >= 6) { // 万以上
+			x = x - 4;
 		}
+		numZHed += unitZH[x - 1];
+		order.push(x + base);
 	}
-	// order.push(base + 4 + 1); // 元的下标
+	// 最后一位
+	if (+num[i] === 0 && num.length > 1) {} else {
+		numZHed += numZH[+num[i]];
+		order.push(+num[i] + 1);
+	}
+	// 元
+	numZHed += unitZH[0];
+	order.push(11);
+	// 判断是否以 ‘壹拾’开头
+	if(numZHed.startsWith('壹拾')){
+		numZHed = numZHed.slice(1);
+		order = order.slice(1);
+	}
 	return {
-		isSuccess: true,
 		value: numZHed,
 		order: order,
 	}

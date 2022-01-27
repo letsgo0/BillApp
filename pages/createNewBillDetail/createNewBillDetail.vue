@@ -7,7 +7,7 @@
 		<uni-section title="金额(必填)" type="line" padding>
 			<uni-easyinput name="amount" v-model="param.amount" placeholder="请输入金额!" placeholder-style="color:#F76260"
 				trim="all"></uni-easyinput>
-			<uni-easyinput :value="amountZH" disabled placeholder="上面的数字转为汉字" placeholder-style="color:#F76260"
+			<uni-easyinput class="amountZH" :value="amountZH" disabled placeholder="上面的数字转为汉字" placeholder-style="color:#F76260"
 				trim="all">
 				<template v-slot:right>
 					<view @click="speakHandler" style="margin-right: 5px;">
@@ -151,5 +151,9 @@
 		padding: 0px;
 		flex: 1;
 		background-color: #FFFFFF;
+	}
+	.amountZH{
+		font-weight: bold;
+		color: #000000;
 	}
 </style>
