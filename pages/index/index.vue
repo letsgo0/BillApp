@@ -1,30 +1,29 @@
 <template>
-	<view class="content">
-		<uni-search-bar placeholder="账簿搜索框" v-model="searchKey" clearButton="auto" cancelButton="none" />
-		<scroll-view scroll-y="true" class="bill-list">
-			<view v-if="billsShown?.length > 0">
-				<uni-list id="bill-list">
-					<template v-for="(bill,index) in billsShown" :key="bill.id">
-						<view class="slide" @touchstart="touchStart(index,$event)" @touchend="touchEnd(index,$event)"
-							@touchmove="touchMove(index,$event)"
-							:style="{transform:'translateX(' + bill.translateX + 'px)'}">
-							<uni-list-chat class="slide-index" :clickable="true" :border="true" :title="bill.name"
-								:avatar="bill.imgPath || imgDefaultPath" :note="bill.desc" :time="bill.createdTime"
-								link="navigateTo" :to="'../billDetail/billDetail-x?billId='+bill.id"></uni-list-chat>
-							<view class="operation">
-								<view>
-									<button @click="editBill(index)" type="default">修改</button>
-									<button @click="deleteBill(index)" type="warn">删除</button>
-								</view>
-							</view>
+	<view class="container">
+		<uni-search-bar class="search-btn" placeholder="账簿搜索框" v-model="searchKey" clearButton="auto"
+			cancelButton="none" />
+		<uni-search-bar style="visibility: hidden;" value="占位元素" />
+		<uni-list class="bill-list" v-if="billsShown?.length > 0">
+			<template v-for="(bill,index) in billsShown" :key="bill.id">
+				<view class="slide" @touchstart="touchStart(index,$event)" @touchend="touchEnd(index,$event)"
+					@touchmove="touchMove(index,$event)" :style="{transform:'translateX(' + bill.translateX + 'px)'}">
+					<uni-list-chat class="slide-index" :clickable="true" :border="true" :title="bill.name"
+						:avatar="bill.imgPath || imgDefaultPath" :note="bill.desc" :time="bill.createdTime"
+						link="navigateTo" :to="'../billDetail/billDetail-x?billId='+bill.id">
+					</uni-list-chat>
+					<view class="operation">
+						<view>
+							<button @click="editBill(index)" type="default">修改</button>
+							<button @click="deleteBill(index)" type="warn">删除</button>
 						</view>
-					</template>
-				</uni-list>
-			</view>
-			<view v-else style="display: flex; justify-content: center; align-items: center;align-content: center;">
-				<text>啥都没有</text>
-			</view>
-		</scroll-view>
+					</view>
+				</view>
+			</template>
+		</uni-list>
+		<view v-else style="display: flex; justify-content: center; align-items: center;align-content: center;">
+			<text>啥都没有</text>
+		</view>
+		<view class="placeholder"></view>
 		<button @click="addNewBill" class="tab-bar" type="warn">添加新账簿</button>
 	</view>
 </template>
@@ -129,7 +128,7 @@
 				this.initPageX = e.touches[0].pageX;
 			},
 			touchEnd(index, e) {
-				if (this.bills[index].translateX > this.initTranslateX - 10) {
+				if (this.bills[index].translateX > this.initTranslateX - 20) {
 					this.bills[index].translateX = this.translateXRange.max;
 				} else {
 					this.bills[index].translateX = this.translateXRange.min;
@@ -153,36 +152,46 @@
 </script>
 
 <style lang="scss" scoped>
-	.bill-list {
-		position: absolute;
-		top: 80rpx;
-		left: 0;
-		bottom: 60upx;
-	}
+	.container {
+		height: 100%;
 
-	.slide {
-		white-space: nowrap;
-		width: max-content;
-		display: flex;
-		align-items: center;
-		overflow-x: hidden;
-
-		.slide-index {
-			// display: inline-block;
-			width: 100vw;
+		.search-btn {
+			position: fixed;
+			background-color: #ededed;
+			z-index: 10;
+			width: 100%;
 		}
 
-		.operation {
-			// width: 314rpx;
-			// display: inline-block;
+		.placeholder {
+			height: $tabBarHeight;
+		}
 
-			>view {
+		.bill-list {
+			.slide {
+				white-space: nowrap;
+				width: max-content;
 				display: flex;
-				flex-direction: row;
-				justify-content: center;
 				align-items: center;
-				align-content: center;
-				margin-left: 20upx;
+				overflow-x: hidden;
+
+				.slide-index {
+					// display: inline-block;
+					width: 100vw;
+				}
+
+				.operation {
+					// width: 314rpx;
+					// display: inline-block;
+
+					>view {
+						display: flex;
+						flex-direction: row;
+						justify-content: center;
+						align-items: center;
+						align-content: center;
+						margin-left: 20upx;
+					}
+				}
 			}
 		}
 	}

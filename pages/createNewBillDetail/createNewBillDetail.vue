@@ -7,35 +7,42 @@
 		<uni-section title="金额(必填)" type="line" padding>
 			<uni-easyinput name="amount" v-model="param.amount" placeholder="请输入金额!" placeholder-style="color:#F76260"
 				trim="all"></uni-easyinput>
-			<uni-easyinput class="amountZH" :value="amountZH" disabled placeholder="上面的数字转为汉字" placeholder-style="color:#F76260"
-				trim="all">
+			<uni-easyinput class="amountZH" :value="amountZH" disabled placeholder="上面的数字转为汉字"
+				placeholder-style="color:#F76260" trim="all">
 				<template v-slot:right>
 					<view @click="speakHandler" style="margin-right: 5px;">
 						<uni-icons v-if="playStatus === enumPlayStatus['PLAY']" custom-prefix="my-icon"
-							type="myIcon-24gl-pauseCircle" size="30">
+							type="myIcon-zanting" size="30" color="#ff0000">
 						</uni-icons>
-						<uni-icons v-else custom-prefix="my-icon" type="myIcon-24gl-playCircle" size="30">
+						<uni-icons v-else custom-prefix="my-icon" type="myIcon-bofang" size="30" color="#00ff00">
 						</uni-icons>
 					</view>
 				</template>
 			</uni-easyinput>
 		</uni-section>
+		<uni-section title="页数(可选)" type="line" padding>
+			<view class="page">
+				<uni-tag class="tag" :text="param.page ? param.page : '0'" type="success" :inverted="true" />
+				<uni-number-box name="page" :value="param.page" @change="changeParamPage" :min="0" :max="9999"></uni-number-box>
+			</view>
+		</uni-section>
 		<uni-section title="备注(可选)" type="line" padding>
 			<uni-easyinput name="desc" v-model="param.desc" placeholder="请输入备注!" placeholder-style="color:#F76260"
 				trim="all"></uni-easyinput>
 		</uni-section>
-
-		<view class="tab-bar">
-			<button form-type="submit" type="primary" :loading="isLoading"> {{btnMainText}}</button>
-			<button form-type="reset" type="warn">重置</button>
+		<view class="tab-bar my-height">
+			<button class="submit" form-type="submit" type="primary" :loading="isLoading"> {{btnMainText}}</button>
+			<button class="reset" form-type="reset" type="warn">重置</button>
 		</view>
 	</form>
 </template>
 
 <script>
-	import {speak} from '/plugins/mixin/speak.js'
+	import {
+		speak
+	} from '/plugins/mixin/speak.js'
 	export default {
-		mixins: [speak], 
+		mixins: [speak],
 		data() {
 			const enumFrom = {
 				'EDIT': 1,
@@ -48,15 +55,16 @@
 					name: "",
 					amount: "",
 					desc: "",
+					page: 0,
 				},
 				enumFrom,
 				fromFlag: enumFrom['ADD'],
 				btnMainText: "创建",
 			}
 		},
-		watch:{
-			'param.amount':{
-				handler(val,oldVal){
+		watch: {
+			'param.amount': {
+				handler(val, oldVal) {
 					this.input = val;
 				},
 				immediate: true,
@@ -69,12 +77,17 @@
 			this.param = params;
 			this.param.id = +params.id;
 			this.param.desc = params.desc || '';
+			this.param.page = params.page || 0;
 			if (this.param.id !== 0) {
 				this.fromFlag = this.enumFrom['EDIT'];
 				this.btnMainText = "修改"
 			}
 		},
 		methods: {
+			changeParamPage(value){
+				this.param.page = value;
+				console.log(value);
+			},
 			formSubmit() {
 				this.isLoading = true;
 				// validate argvs
@@ -127,7 +140,19 @@
 	}
 </script>
 
-<style scoped>
+<style scoped lang="scss">
+	.my-height {
+		height: calc(2 * #{$tabBarHeight}) !important;
+	}
+
+	.submit {
+		height: $tabBarHeight;
+	}
+
+	.reset {
+		height: $tabBarHeight;
+	}
+
 	.uni-form-item__title {
 		font-size: 16px;
 		line-height: 24px;
@@ -152,8 +177,21 @@
 		flex: 1;
 		background-color: #FFFFFF;
 	}
-	.amountZH{
+
+	.amountZH {
 		font-weight: bold;
 		color: #000000;
+		background-color: white;
+	}
+
+	.page {
+		display: flex;
+		flex-direction: row;
+		justify-content: flex-start;
+		align-items: center;
+
+		.tag {
+			margin-right: 20px;
+		}
 	}
 </style>

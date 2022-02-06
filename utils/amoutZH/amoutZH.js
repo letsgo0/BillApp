@@ -31,7 +31,7 @@ function num2ZH(num) {
 	// vois: ['error', '0', '1', '2', '3', '4', '5', '6', '7', '8', '9', 'yuan', 'shi', 'bai', 'qian', 'wan']
 	const base = 10;
 	let i;
-	for (i = 0; i < num.length - 1; ++i) {
+	for (i = 0; i < num.length; ++i) {
 		const index = +num[i];
 		numZHed += numZH[index];
 		let x = num.length - i; // 第几位，从1开始
@@ -42,16 +42,33 @@ function num2ZH(num) {
 		numZHed += unitZH[x - 1];
 		order.push(x + base);
 	}
-	// 最后一位
-	if (+num[i] === 0 && num.length > 1) {} else {
-		numZHed += numZH[+num[i]];
-		order.push(+num[i] + 1);
+	// 过滤 零
+	let flag = [true, true];
+	if (order[0] !== 1) {
+		for (let i = 2; i < order.length; i += 2) {
+			flag[i] = true;
+			flag[i + 1] = true;
+			if (order[i] === 1) {
+				flag[i] = false;
+				flag[i + 1] = false;
+				if (order[i + 1] === 15 || order[i + 1] === 11) { // wan
+					flag[i + 1] = true;
+				}
+			}
+		}
 	}
-	// 元
-	numZHed += unitZH[0];
-	order.push(11);
+	let numZHedTmp = '';
+	let orderTmp = [];
+	for (let i = 0; i < order.length; ++i) {
+		if (flag[i]) {
+			numZHedTmp += numZHed[i];
+			orderTmp.push(order[i]);
+		}
+	}
+	numZHed = numZHedTmp;
+	order = orderTmp;
 	// 判断是否以 ‘壹拾’开头
-	if(numZHed.startsWith('壹拾')){
+	if (numZHed.startsWith('壹拾')) {
 		numZHed = numZHed.slice(1);
 		order = order.slice(1);
 	}

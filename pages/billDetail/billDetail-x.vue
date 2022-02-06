@@ -1,45 +1,32 @@
 <template>
-	<view class="">
+	<view class="container">
 		<uni-search-bar id="record-search-btn" placeholder="输入名字搜索" v-model="searchKey" clearButton="auto"
 			cancelButton="none" />
 		<!-- 左右划动 -->
-		<view v-if="recordsShown?.length > 0" class="bill-record-container">
-			<view class="title" :style="{
-					width: `${titleWidth}px`
-				}">
-				<!-- <view class="name"><text>姓名</text></view>
-				<view class="amount"><text>金额</text></view>
-				<view class="desc"><text>备注</text></view> -->
+		<view v-if="recordsShown?.length > 0" class="content">
+			<view class="title">
 				<text class="name">姓名</text>
 				<text class="amount">金额</text>
-				<text class="desc">备注</text>
 			</view>
-			<vt-list-x :items="recordsShown" :visualCount="visualCount" :listHeight="listHeight" :itemWidth="itemWidth"
+			<!-- <vt-list-x :items="recordsShown" :visualCount="visualCount" :listHeight="listHeight" :itemWidth="itemWidth" -->
+			<vt-list-x class="list" :items="recordsShown" :visualCount="visualCount" :itemWidth="itemWidth"
 				:prevCount="10" :nextCount="10">
 				<template v-slot:default="slotProps">
-					<view class="slide" @touchstart="touchStart(slotProps.index,$event)"
-						@touchend="touchEnd(slotProps.index,$event)" @touchmove="touchMove(slotProps.index,$event)"
-						:style="{
-							transform:`translateY(${recordsShown[slotProps.index]?.translateY || 0}px`,
-							width: itemWidth + 'px'
-						}">
-						<view class="slide-index">
-							<!-- <view class="name"><text>{{slotProps.item.name }}</text></view>
-							<view class="amount"><text>{{slotProps.item.amount }}</text></view>
-							<view class="desc"><text>{{slotProps.item.desc || '' }}</text></view> -->
+					<view class="slide">
+						<!-- <view class="slide-info"> -->
 							<text class="name">{{slotProps.item.name }}</text>
 							<text class="amount">{{slotProps.item.amountZH }}</text>
-							<text class="desc">{{slotProps.item.desc || '' }}</text>
-						</view>
-						<view class="operation">
+						<!-- </view> -->
+						<!-- <view class="operation"> -->
 							<text @click="editBillRecord(slotProps.index)" class="edit">查看</text>
 							<text @click="deleteBillRecord(+recordsShown[slotProps.index].id)" class="delete">删除</text>
-						</view>
+						<!-- </view> -->
 					</view>
 				</template>
 			</vt-list-x>
 		</view>
-		<view v-else style="display: flex; justify-content: center; align-items: center;align-content: center;">
+		<view v-else class="content"
+			style="display: flex; justify-content: center; align-items: center;align-content: center;">
 			<text>啥都没有</text>
 		</view>
 		<button @click="addBillRecord" class="tab-bar" type="warn">新增记录</button>
@@ -56,10 +43,9 @@
 		data() {
 			return {
 				billRecords: [],
-				itemWidth: 50,
+				itemWidth: 0,
 				listHeight: 0,
 				visualCount: 0,
-				titleWidth: 40,
 				isDrag: false,
 				translateYRange: {
 					min: 0,
@@ -69,6 +55,8 @@
 				initPageY: 0,
 				tableName: '',
 				searchKey: '',
+				screenHeight: 0,
+				itemWidth: 0,
 			}
 		},
 		computed: {
@@ -86,15 +74,18 @@
 			this.loadAllRecords();
 			const sys = uni.getSystemInfo({
 				success: (data) => {
-					const width = data.safeArea.width - this.titleWidth;
-					this.visualCount = Math.ceil(width / this.itemWidth);
+					this.itemWidth = data.screenWidth * 60 / 750; // rpx => px
+					console.log('screenWidth: ' + data.screenWidth);
+					console.log(this.itemWidth);
+					const remainWidth = data.safeArea.width - this.itemWidth;
+					this.visualCount = Math.ceil(remainWidth / this.itemWidth);
 					console.log('visualCount = ' + this.visualCount);
 				}
 			})
 		},
 		methods: {
 			confirmHeight() {
-				const view = uni.createSelectorQuery().in(this).select('.slide-index');
+				const view = uni.createSelectorQuery().in(this).select('.slide-info');
 				view.boundingClientRect(data => {
 					if (data) {
 						this.listHeight = data.height;
@@ -105,7 +96,10 @@
 				const app = getApp();
 				app.globalData.DB.selectBillAllRecords(this.tableName)
 					.then(res => {
-						this.billRecords = res.map( item => {item.amountZH = AZH.num2ZH(item.amount).value; return item});
+						this.billRecords = res.map(item => {
+							item.amountZH = AZH.num2ZH(item.amount).value;
+							return item
+						});
 						this.$nextTick(() => {
 							this.confirmHeight();
 						})
@@ -123,10 +117,11 @@
 					name,
 					amount,
 					desc,
-					id
+					id,
+					page,
 				} = this.recordsShown[index];
 				const url =
-					`../createNewBillDetail/createNewBillDetail?tableName=${this.tableName}&id=${id}&name=${name}&amount=${amount}&desc=${desc}`
+					`../createNewBillDetail/createNewBillDetail?tableName=${this.tableName}&id=${id}&name=${name}&amount=${amount}&page=${page}&desc=${desc}`
 				uni.navigateTo({
 					url: url,
 				})
@@ -206,102 +201,106 @@
 </script>
 
 <style lang="scss" scoped>
-	$nameHeight: 150px;
-	$amountHeight: 400px;
-	$descHeight: 240px;
+	$itemWidth: 70rpx;
+	$nameHeight: 220rpx;
+	$amountHeight: 400rpx;
 
-	.bill-record-container {
-		width: 100%;
+	.container {
 		display: flex;
-		flex-direction: row;
-		flex-wrap: nowrap;
+		flex-direction: column;
+		// height: 100%; // 100%无效，因为父元素没有明确高度
+		height: 100vh;
+		padding-bottom: $tabBarHeight;
 
-		.slide,
-		.slide-index,
-		.operation,
-		.title {
+		.content {
+			flex-grow: 1;
+
 			display: flex;
-			flex-direction: column;
+			flex-direction: row;
 			flex-wrap: nowrap;
-			justify-content: flex-start;
-			align-items: center;
-			align-content: center;
-			width: 100%;
-		}
 
-		.slide {
-			height: 100%;
-			border-left: 2px dotted #808080;
+			background-color: #C8C7CC;
 
-			.slide-index {
+			.title {
+				display: flex;
+				flex-direction: column;
+				align-items: center;
+				height: 100%;
+				width: $itemWidth;
+				// padding: 0 20px;
+
 				.name {
-					height: $nameHeight;
+					min-height: $nameHeight;
+					height: 25%;
+					width: $itemWidth;
 					background-color: #C0C0C0;
-					// overflow-y: auto;
 				}
 
 				.amount {
-					height: $amountHeight;
+					flex-grow: 1;
 					background-color: #F0AD4E;
-					// overflow-y: auto;
-				}
-
-				.desc {
-					height: $descHeight;
-					background-color: #18BC37;
-					// overflow-y: auto;
+					width: $itemWidth;
 				}
 			}
 
-			.edit,
-			.delete {
-				padding: 6px 0;
-				border-radius: 3px;
-			}
+			.slide {
+				display: flex;
+				flex-direction: column;
+				flex-wrap: nowrap;
+				align-items: center;
+				height: 100%;
+				border-left: 1px dotted #808080;
+				width: $itemWidth;
 
-			.edit {
-				background-color: #e4cf57;
-			}
+				// .slide-info {
+				// 	display: flex;
+				// 	flex-direction: column;
+				// 	flex-wrap: nowrap;
+				// 	align-items: center;
+				// 	height: 100%;
+					
+					.name {
+						min-height: $nameHeight;
+						height: 25%;
+						background-color: #C0C0C0;
+						// overflow-y: auto;
+					}
 
-			.delete {
-				background-color: #DD524D;
+					.amount {
+						// height: $amountHeight;
+						flex-grow: 1;
+						background-color: #F0AD4E;
+						// overflow-y: auto;
+					}
+				// }
+
+				.edit,
+				.delete {
+					padding: 6px 0;
+					border-radius: 3px;
+				}
+
+				.edit {
+					background-color: #e4cf57;
+				}
+
+				.delete {
+					background-color: #DD524D;
+				}
 			}
 		}
 
-		.title {
+		.name,
+		.amount,
+		.edit,
+		.delete {
+			display: flex;
+			flex-direction: column;
 			justify-content: center;
-
-			.name {
-				height: $nameHeight;
-				background-color: #C0C0C0;
-				// overflow-y: auto;
-			}
-
-			.amount {
-				height: $amountHeight;
-				background-color: #F0AD4E;
-				// overflow-y: auto;
-			}
-
-			.desc {
-				height: $descHeight;
-				background-color: #18BC37;
-				// overflow-y: auto;
-			}
+			align-items: center;
+			align-content: center;
+			width: 100%;
+			writing-mode: vertical-lr;
 		}
-	}
-
-	.name,
-	.amount,
-	.desc,
-	.edit,
-	.delete {
-		display: flex;
-		flex-direction: column;
-		justify-content: center;
-		align-items: center;
-		align-content: center;
-		width: 100%;
-		writing-mode: vertical-lr;
 	}
 </style>

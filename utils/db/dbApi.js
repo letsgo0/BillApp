@@ -1,5 +1,26 @@
 import * as db from './dbUtil.js'
 
+Date.prototype.format = function(fmt) { 
+     var o = { 
+        "M+" : this.getMonth()+1,                 //月份 
+        "d+" : this.getDate(),                    //日 
+        "h+" : this.getHours(),                   //小时 
+        "m+" : this.getMinutes(),                 //分 
+        "s+" : this.getSeconds(),                 //秒 
+        "q+" : Math.floor((this.getMonth()+3)/3), //季度 
+        "S"  : this.getMilliseconds()             //毫秒 
+    }; 
+    if(/(y+)/.test(fmt)) {
+            fmt=fmt.replace(RegExp.$1, (this.getFullYear()+"").substr(4 - RegExp.$1.length)); 
+    }
+     for(var k in o) {
+        if(new RegExp("("+ k +")").test(fmt)){
+             fmt = fmt.replace(RegExp.$1, (RegExp.$1.length==1) ? (o[k]) : (("00"+ o[k]).substr((""+ o[k]).length)));
+         }
+     }
+    return fmt; 
+};
+
 const dbName = "bill";
 const path = "_doc/bill.db";
 db.config(dbName, path);
@@ -33,7 +54,7 @@ function createBillsTable() {
 
 function createBillTable(billName) {
 	const sqlStr =
-		`create table if not exists ${billName}("id" INTEGER PRIMARY KEY AUTOINCREMENT,"name" TEXT,"amount" INTEGER, "desc" TEXT);`;
+		`create table if not exists ${billName}("id" INTEGER PRIMARY KEY AUTOINCREMENT,"name" TEXT,"amount" INTEGER, "desc" TEXT, "page" INTEGER);`;
 	const res = db.createTable(sqlStr)
 		.then(res => {
 			return {
@@ -62,7 +83,7 @@ function addBill(obj) {
 	const name = obj.name; //账簿名称
 	const desc = obj.desc; //账簿描述
 	const imgPath = obj.imgPath; //账簿封面图片路径
-	const createdTime = (new Date()).toLocaleTimeString(); //创建时间
+	const createdTime = new Date().format("yyyy年MM月dd日 hh时mm分ss秒"); //创建时间
 	const sqlStr = [
 		`insert into ${rootTable}(name,desc,imgPath,createdTime) values("${name}", "${desc}", "${imgPath}","${createdTime}");`,
 		`select last_insert_rowid();`
@@ -100,7 +121,8 @@ function addBillRecord(obj) {
 	const name = obj.name; //人名
 	const amount = obj.amount; //金额
 	const desc = obj.desc; // 备注
-	const sqlStr = [`insert into ${tableName}(name,amount,desc) values("${name}", "${amount}", "${desc}");`,
+	const page = obj.page; // 页数
+	const sqlStr = [`insert into ${tableName}(name,amount,desc,page) values("${name}", "${amount}", "${desc}", "${page}");`,
 		`select last_insert_rowid();`
 	];
 	console.log(sqlStr);
@@ -186,8 +208,9 @@ function updateBillRecord(obj) {
 		name,
 		amount,
 		desc,
+		page,
 	} = obj;
-	const sqlStr = `update ${tableName} set name = "${name}", amount= "${amount}", desc = "${desc}" where id = "${id}"`;
+	const sqlStr = `update ${tableName} set name = "${name}", amount= "${amount}", desc = "${desc}", page="${page}" where id = "${id}"`;
 	console.log(sqlStr);
 	const res = db.updateRecord(sqlStr)
 		.then(res => {

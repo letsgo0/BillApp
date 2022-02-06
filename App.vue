@@ -21,7 +21,7 @@
 	}
 </script>
 
-<style>
+<style lang="scss">
 	@import "@/static/iconfont.css";
 	/*每个页面公共css */
 	* {
@@ -31,6 +31,8 @@
 		position: fixed;
 		bottom: 0;
 		width: 100vw;
+		height: $tabBarHeight;
+		border-radius: 0;
 	}
 
 	.w-100vw {

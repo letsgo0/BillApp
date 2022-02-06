@@ -2,12 +2,12 @@
 	<view class="container">
 		<form @submit="formSubmit" @reset="formReset">
 			<uni-section title="账簿名字(必填)" type="line" padding>
-				<uni-easyinput name="name" v-model="param.name" placeholder="请输入账簿名字!"
-					placeholder-style="color:#F76260"  trim="all"></uni-easyinput>
+				<uni-easyinput name="name" v-model="param.name" placeholder="请输入账簿名字!" placeholder-style="color:#F76260"
+					trim="all"></uni-easyinput>
 			</uni-section>
 			<uni-section title="账簿描述(可选)" type="line" padding>
-				<uni-easyinput name="desc" v-model="param.desc" placeholder="请输入账簿描述!"
-					placeholder-style="color:#F76260"  trim="all"></uni-easyinput>
+				<uni-easyinput name="desc" v-model="param.desc" placeholder="请输入账簿描述!" placeholder-style="color:#F76260"
+					trim="all"></uni-easyinput>
 			</uni-section>
 			<uni-section title="账簿封面(可选)" type="line" padding>
 				<view class="img">
@@ -26,9 +26,9 @@
 					</view>
 				</view>
 			</uni-section>
-			<view class="tab-bar">
-				<button type="primary" form-type="submit" :loading="isLoading">{{btnMainText}}</button>
-				<button type="warn" form-type="reset">重置</button>
+			<view class="tab-bar my-height">
+				<button class="submit" form-type="submit" type="primary" :loading="isLoading"> {{btnMainText}}</button>
+				<button class="reset" form-type="reset" type="warn">重置</button>
 			</view>
 		</form>
 	</view>
@@ -163,7 +163,19 @@
 	}
 </script>
 
-<style scoped>
+<style scoped lang="scss">
+	.my-height {
+		height: calc(2 * #{$tabBarHeight}) !important;
+	}
+
+	.submit {
+		height: $tabBarHeight;
+	}
+
+	.reset {
+		height: $tabBarHeight;
+	}
+
 	.img {
 		display: flex;
 		flex-direction: row;

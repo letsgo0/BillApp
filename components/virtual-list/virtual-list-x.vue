@@ -1,10 +1,11 @@
 <template>
 	<view class="virtual-list">
-		<scroll-view scroll-x="true" :style="{
+		<scroll-view class="scr-view" scroll-x="true" :style="{
 						 'width': visualWidth + 'px',
 						 'position': 'relative',
 					 }" @scroll="scrollHandler">
-			<view class="scroll-bar" :style="{'width': wholeWidth + 'px','height': listHeight + 'px'}"></view>
+			<view class="scroll-bar" :style="{'width': wholeWidth + 'px'}"></view>
+			<!-- <view class="scroll-bar" :style="{'width': wholeWidth + 'px','height': listHeight + 'px'}"></view> -->
 			<view class="list" :style="{'transform': `translateX(${offset}px)`}">
 				<template class="item-wrap" v-for="(item,index) in visibleData" :key="item.id">
 					<slot :item="item" :index="start + index"></slot>
@@ -38,10 +39,10 @@
 				required: true,
 			},
 			// 列表高度
-			listHeight: {
-				type: Number,
-				required: true
-			},
+			// listHeight: {
+			// 	type: Number,
+			// 	required: true
+			// },
 		},
 		data() {
 			return {
@@ -95,15 +96,27 @@
 </script>
 
 <style lang="scss" scoped>
-	.list {
-		position: absolute;
-		top: 0;
-		left: 0;
-		display: flex;
-		flex-direction: row;
-		flex-wrap: nowrap;
-		align-items: flex-start;
-		// overflow-x: ;
-		// scroll-behavior: unset;
+	.virtual-list {
+		height: 100%;
+
+		.scr-view {
+			height: 100%;
+
+			.scroll-bar {
+				height: 100%;
+			}
+
+			.list {
+				height: 100%;
+				position: absolute;
+				top: 0;
+				left: 0;
+				display: flex;
+				flex-direction: row;
+				flex-wrap: nowrap;
+				align-items: flex-start;
+				padding-right: 15px;
+			}
+		}
 	}
 </style>
