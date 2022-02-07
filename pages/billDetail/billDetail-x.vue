@@ -4,22 +4,26 @@
 			cancelButton="none" />
 		<!-- 左右划动 -->
 		<view v-if="recordsShown?.length > 0" class="content">
+			<view class="progress">
+				<view class="on" :style="{width: progWidth + '%'}"></view>
+			</view>
 			<view class="title">
 				<text class="name">姓名</text>
 				<text class="amount">金额</text>
 			</view>
 			<!-- <vt-list-x :items="recordsShown" :visualCount="visualCount" :listHeight="listHeight" :itemWidth="itemWidth" -->
-			<vt-list-x class="list" :items="recordsShown" :visualCount="visualCount" :itemWidth="itemWidth"
-				:prevCount="15" :nextCount="15">
+			<vt-list-x ref="vtListX" class="list" :items="recordsShown" v-model:position="position"
+				:visualCount="visualCount" :itemWidth="itemWidth" :prevCount="1"
+				:nextCount="1">
 				<template v-slot:default="slotProps">
 					<view class="slide">
 						<!-- <view class="slide-info"> -->
-							<text class="name">{{slotProps.item.name }}</text>
-							<text class="amount">{{slotProps.item.amountZH }}</text>
+						<text class="name">{{slotProps.item.name }}</text>
+						<text class="amount">{{slotProps.item.amountZH }}</text>
 						<!-- </view> -->
 						<!-- <view class="operation"> -->
-							<text @click="editBillRecord(slotProps.index)" class="edit">查看</text>
-							<text @click="deleteBillRecord(+recordsShown[slotProps.index].id)" class="delete">删除</text>
+						<text @click="editBillRecord(slotProps.index)" class="edit">查看</text>
+						<text @click="deleteBillRecord(+recordsShown[slotProps.index].id)" class="delete">删除</text>
 						<!-- </view> -->
 					</view>
 				</template>
@@ -55,8 +59,9 @@
 				initPageY: 0,
 				tableName: '',
 				searchKey: '',
-				screenHeight: 0,
 				itemWidth: 0,
+				remainWidth: 0,
+				position: 0,
 			}
 		},
 		computed: {
@@ -66,6 +71,15 @@
 					return this.billRecords;
 				else
 					return this.billRecords.filter(record => record.name.match(this.searchKey + ''))
+			},
+			wholeWidth() {
+				return Math.max(this.itemWidth * this.recordsShown.length - this.remainWidth,0);
+			},
+			progWidth(){
+				if (this.wholeWidth === 0){
+					return 100;
+				}
+				return this.position / this.wholeWidth * 100;
 			}
 		},
 		onLoad(params) {
@@ -74,11 +88,11 @@
 			this.loadAllRecords();
 			const sys = uni.getSystemInfo({
 				success: (data) => {
-					this.itemWidth = data.screenWidth * 60 / 750; // rpx => px
+					this.itemWidth = Math.trunc(data.screenWidth * 70 / 750); // rpx => px, 70指$itemWidth
 					console.log('screenWidth: ' + data.screenWidth);
 					console.log(this.itemWidth);
-					const remainWidth = data.safeArea.width - this.itemWidth;
-					this.visualCount = Math.ceil(remainWidth / this.itemWidth);
+					this.remainWidth = data.safeArea.width - this.itemWidth;
+					this.visualCount = Math.ceil(this.remainWidth / this.itemWidth);
 					console.log('visualCount = ' + this.visualCount);
 				}
 			})
@@ -219,7 +233,24 @@
 			flex-direction: row;
 			flex-wrap: nowrap;
 
+			position: relative;
+
 			background-color: #C8C7CC;
+
+			.progress {
+				position: absolute;
+				top: 0;
+				left: 0;
+				right: 0;
+				height: 2px;
+				background-color: #000000;
+				z-index: 10;
+				
+				.on {
+					background-color: red;
+					height: 100%;
+				}
+			}
 
 			.title {
 				display: flex;
@@ -259,20 +290,21 @@
 				// 	flex-wrap: nowrap;
 				// 	align-items: center;
 				// 	height: 100%;
-					
-					.name {
-						min-height: $nameHeight;
-						height: 25%;
-						background-color: #C0C0C0;
-						// overflow-y: auto;
-					}
 
-					.amount {
-						// height: $amountHeight;
-						flex-grow: 1;
-						background-color: #F0AD4E;
-						// overflow-y: auto;
-					}
+				.name {
+					min-height: $nameHeight;
+					height: 25%;
+					background-color: #C0C0C0;
+					// overflow-y: auto;
+				}
+
+				.amount {
+					// height: $amountHeight;
+					flex-grow: 1;
+					background-color: #F0AD4E;
+					// overflow-y: auto;
+				}
+
 				// }
 
 				.edit,

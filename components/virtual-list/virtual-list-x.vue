@@ -38,11 +38,10 @@
 				type: Number,
 				required: true,
 			},
-			// 列表高度
-			// listHeight: {
-			// 	type: Number,
-			// 	required: true
-			// },
+			position: {
+				type: Number,
+				required: true,
+			}
 		},
 		data() {
 			return {
@@ -54,7 +53,7 @@
 		},
 		computed: {
 			end() {
-				Math.min(this.start + this.prevCount + this.visualCount + this.nextCount, this.items.length)
+				return Math.min(this.start + this.prevCount + this.visualCount + this.nextCount, this.items.length)
 			},
 			// 可视区域的item
 			visibleData() {
@@ -75,21 +74,17 @@
 			scrollHandler(ev) {
 				// console.log(ev.detail);
 				const scrollLeft = ev.detail.scrollLeft;
+				this.scroll.call(this,scrollLeft);
+				this.$emit('update:position', scrollLeft);
+			},
+			scroll(scrollLeft){
+				console.log('scroll: ' + scrollLeft);
 				let start = Math.floor(scrollLeft / this.itemWidth); // 此时的start为视图窗口对应的item下标
-				// console.log(start);
-				// let end = start + this.visualCount + this.nextCount;
-				// end = Math.min(end, this.items.length);
 				const dis = Math.min(start, this.prevCount);
-				// console.log(dis);
 				const offset = scrollLeft - (scrollLeft % this.itemWidth) - dis * this.itemWidth;
 				start = Math.max(start - this.prevCount, 0); //此时的start是算上顶部预留的item数后的下标
 				this.start = start;
-				this.offset = offset;
-				// console.log('scrollLeft: ' + scrollLeft);
-				// console.log(`scrollLeft % this.itemWidth = ${scrollLeft} % ${this.itemWidth} = ${scrollLeft % this.itemWidth}`);
-				// console.log(`dis * this.itemWidth = ${dis} * ${this.itemWidth} = ${dis * this.itemWidth}`);
-				// console.log(start);
-				// console.log(`offset = ${offset}`);
+				this.offset = offset;				
 			}
 		}
 	}
@@ -115,7 +110,7 @@
 				flex-direction: row;
 				flex-wrap: nowrap;
 				align-items: flex-start;
-				padding-right: 20px;
+				padding-right: 15rpx;
 			}
 		}
 	}

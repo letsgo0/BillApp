@@ -86,6 +86,7 @@
 		methods: {
 			boxBlur(e) {
 				console.log('-------blur:', e);
+				this.param.page = e.detail.value;
 			},
 			changeParamPage(value){
 				this.param.page = value;
