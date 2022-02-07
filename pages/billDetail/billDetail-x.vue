@@ -1,6 +1,6 @@
 <template>
 	<view class="container">
-		<uni-search-bar id="record-search-btn" placeholder="输入名字搜索" v-model="searchKey" clearButton="auto"
+		<uni-search-bar id="record-search-btn" placeholder="输入名字搜索,用'*'占位" v-model="searchKey" clearButton="auto"
 			cancelButton="none" />
 		<!-- 左右划动 -->
 		<view v-if="recordsShown?.length > 0" class="content">
@@ -70,7 +70,7 @@
 				if (this.searchKey == '')
 					return this.billRecords;
 				else
-					return this.billRecords.filter(record => record.name.match(this.searchKey + ''))
+					return this.billRecords.filter(record => record.name.match(this.searchKey.replace(/\*/g,'.') + ''))
 			},
 			wholeWidth() {
 				return Math.max(this.itemWidth * this.recordsShown.length - this.remainWidth,0);

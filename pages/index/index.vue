@@ -1,6 +1,6 @@
 <template>
 	<view class="container">
-		<uni-search-bar class="search-btn" placeholder="账簿搜索框" v-model="searchKey" clearButton="auto"
+		<uni-search-bar class="search-btn" placeholder="账簿搜索框,用'*'占位" v-model="searchKey" clearButton="auto"
 			cancelButton="none" />
 		<uni-search-bar style="visibility: hidden;" value="占位元素" />
 		<uni-list class="bill-list" v-if="billsShown?.length > 0">
@@ -50,7 +50,7 @@
 				if (this.searchKey == '')
 					return this.bills;
 				else
-					return this.bills.filter(bill => bill.name.match(this.searchKey + ''))
+					return this.bills.filter(bill => bill.name.match(this.searchKey.replace(/\*/g,'.') + ''))
 			}
 		},
 		onLoad() {
