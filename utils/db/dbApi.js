@@ -83,7 +83,7 @@ function addBill(obj) {
 	const name = obj.name; //账簿名称
 	const desc = obj.desc; //账簿描述
 	const imgPath = obj.imgPath; //账簿封面图片路径
-	const createdTime = new Date().format("yyyy年MM月dd日 hh时mm分ss秒"); //创建时间
+	const createdTime = new Date().format("yyyy年MM月dd日 hh时mm分"); //创建时间
 	const sqlStr = [
 		`insert into ${rootTable}(name,desc,imgPath,createdTime) values("${name}", "${desc}", "${imgPath}","${createdTime}");`,
 		`select last_insert_rowid();`

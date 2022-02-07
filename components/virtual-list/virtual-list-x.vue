@@ -115,7 +115,7 @@
 				flex-direction: row;
 				flex-wrap: nowrap;
 				align-items: flex-start;
-				padding-right: 15px;
+				padding-right: 20px;
 			}
 		}
 	}

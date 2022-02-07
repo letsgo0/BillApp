@@ -23,7 +23,7 @@
 		<uni-section title="页数(可选)" type="line" padding>
 			<view class="page">
 				<uni-tag class="tag" :text="param.page ? param.page : '0'" type="success" :inverted="true" />
-				<uni-number-box name="page" :value="param.page" @change="changeParamPage" :min="0" :max="9999"></uni-number-box>
+				<uni-number-box name="page" :value="param.page" @change="changeParamPage" @blur="boxBlur" :min="0" :max="9999"></uni-number-box>
 			</view>
 		</uni-section>
 		<uni-section title="备注(可选)" type="line" padding>
@@ -84,6 +84,9 @@
 			}
 		},
 		methods: {
+			boxBlur(e) {
+				console.log('-------blur:', e);
+			},
 			changeParamPage(value){
 				this.param.page = value;
 				console.log(value);

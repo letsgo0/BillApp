@@ -10,7 +10,7 @@
 			</view>
 			<!-- <vt-list-x :items="recordsShown" :visualCount="visualCount" :listHeight="listHeight" :itemWidth="itemWidth" -->
 			<vt-list-x class="list" :items="recordsShown" :visualCount="visualCount" :itemWidth="itemWidth"
-				:prevCount="10" :nextCount="10">
+				:prevCount="15" :nextCount="15">
 				<template v-slot:default="slotProps">
 					<view class="slide">
 						<!-- <view class="slide-info"> -->
@@ -29,7 +29,7 @@
 			style="display: flex; justify-content: center; align-items: center;align-content: center;">
 			<text>啥都没有</text>
 		</view>
-		<button @click="addBillRecord" class="tab-bar" type="warn">新增记录</button>
+		<button @click="addBillRecord" class="tab-bar" type="primary">新增记录</button>
 	</view>
 </template>
 
@@ -227,6 +227,7 @@
 				align-items: center;
 				height: 100%;
 				width: $itemWidth;
+				border-right: 2px solid red;
 				// padding: 0 20px;
 
 				.name {
