@@ -8,7 +8,7 @@
 				<view class="slide" @touchstart="touchStart(index,$event)" @touchend="touchEnd(index,$event)"
 					@touchmove="touchMove(index,$event)" :style="{transform:'translateX(' + bill.translateX + 'px)'}">
 					<uni-list-chat class="slide-index" :clickable="true" :border="true" :title="bill.name"
-						:avatar="bill.imgPath || imgDefaultPath" :note="bill.desc" :time="bill.createdTime"
+						:avatar="bill.imgPath || imgDefaultPath" :note="bill.desc" :time="'创于'+bill.createdTime"
 						link="navigateTo" :to="'../billDetail/billDetail-x?billId='+bill.id">
 					</uni-list-chat>
 					<view class="operation">

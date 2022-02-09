@@ -13,8 +13,8 @@
 			</view>
 			<!-- <vt-list-x :items="recordsShown" :visualCount="visualCount" :listHeight="listHeight" :itemWidth="itemWidth" -->
 			<vt-list-x ref="vtListX" class="list" :items="recordsShown" v-model:position="position"
-				:visualCount="visualCount" :itemWidth="itemWidth" :prevCount="1"
-				:nextCount="1">
+				:visualCount="visualCount" :itemWidth="itemWidth" :prevCount="10"
+				:nextCount="10">
 				<template v-slot:default="slotProps">
 					<view class="slide">
 						<!-- <view class="slide-info"> -->

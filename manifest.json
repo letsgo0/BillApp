@@ -1,5 +1,5 @@
 {
-    "name" : "Billing",
+    "name" : "人亲账簿",
     "appid" : "__UNI__7F7D508",
     "description" : "",
     "versionName" : "1.0.0",
@@ -54,6 +54,9 @@
                         "secretkey" : ""
                     }
                 }
+            },
+            "splashscreen" : {
+                "useOriginalMsgbox" : true
             }
         }
     },
