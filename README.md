@@ -16,18 +16,31 @@
 |  id    |   name  |  amount | page   |desc |
 
 # BillApp运行效果
-1. 初始界面(账簿展示)
+1. 首页(账簿展示)
+
+![首页效果图](https://github.com/letsgo0/BillApp/blob/master/docs/readmeImage/init.jpg)
 
 2. 添加账簿
 
+![添加账簿效果图](https://github.com/letsgo0/BillApp/blob/master/docs/readmeImage/createBill.jpg)
+
 3. 修改账簿
+
+![修改账簿效果图](https://github.com/letsgo0/BillApp/blob/master/docs/readmeImage/updateBill.jpg)
 
 4. 账簿记录展示
 
+![账簿记录展示效果图](https://github.com/letsgo0/BillApp/blob/master/docs/readmeImage/ShowBillRecord.jpg)
+
 5. 添加账簿记录
+
+![添加账簿记录效果图](https://github.com/letsgo0/BillApp/blob/master/docs/readmeImage/createBillRecord.jpg)
 
 6. 修改账簿记录
 
-7. 按名称查找账簿
+![修改账簿记录效果图](https://github.com/letsgo0/BillApp/blob/master/docs/readmeImage/updateBillRecord.jpg)
 
-8. 按名字查找账簿记录
+7. 按名字查找账簿记录
+
+![查找效果图](https://github.com/letsgo0/BillApp/blob/master/docs/readmeImage/ShowBillRecordAfterFilter.jpg)
+
