@@ -18,29 +18,29 @@
 # BillApp运行效果
 1. 首页(账簿展示)
 
-<img alt="首页效果图" height="150px" src="https://github.com/letsgo0/BillApp/blob/master/docs/readmeImage/init.jpg" />
+  <img alt="首页效果图" height="300px" src="https://github.com/letsgo0/BillApp/blob/master/docs/readmeImage/init.jpg" />
 
 2. 添加账簿
 
-<img alt="添加账簿效果图" width="30%" src="https://github.com/letsgo0/BillApp/blob/master/docs/readmeImage/createBill.jpg" />
+  <img alt="添加账簿效果图" height="300px" src="https://github.com/letsgo0/BillApp/blob/master/docs/readmeImage/createBill.jpg" />
 
 3. 修改账簿
 
-<img alt="修改账簿效果图" width="30%" src="https://github.com/letsgo0/BillApp/blob/master/docs/readmeImage/updateBill.jpg" />
+  <img alt="修改账簿效果图" height="300px" src="https://github.com/letsgo0/BillApp/blob/master/docs/readmeImage/updateBill.jpg" />
 
 4. 账簿记录展示
 
-<img alt="账簿记录展示效果图" width="30%" src="https://github.com/letsgo0/BillApp/blob/master/docs/readmeImage/ShowBillRecord.jpg" />
+  <img alt="账簿记录展示效果图" height="300px" src="https://github.com/letsgo0/BillApp/blob/master/docs/readmeImage/ShowBillRecord.jpg" />
 
 5. 添加账簿记录
 
-<img alt="添加账簿记录效果图" width="30%" src="https://github.com/letsgo0/BillApp/blob/master/docs/readmeImage/createBillRecord.jpg" />
+  <img alt="添加账簿记录效果图" height="300px" src="https://github.com/letsgo0/BillApp/blob/master/docs/readmeImage/createBillRecord.jpg" />
 
 6. 修改账簿记录
 
-<img alt="修改账簿记录效果图" width="30%" src="https://github.com/letsgo0/BillApp/blob/master/docs/readmeImage/updateBillRecord.jpg" />
+  <img alt="修改账簿记录效果图" height="300px" src="https://github.com/letsgo0/BillApp/blob/master/docs/readmeImage/updateBillRecord.jpg" />
 
 7. 按名字查找账簿记录
 
-<img alt="查找效果图" width="30%" src="https://github.com/letsgo0/BillApp/blob/master/docs/readmeImage/ShowBillRecordAfterFilter.jpg" />
+  <img alt="查找效果图" height="300px" src="https://github.com/letsgo0/BillApp/blob/master/docs/readmeImage/ShowBillRecordAfterFilter.jpg" />
 
