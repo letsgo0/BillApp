@@ -57,6 +57,9 @@
 				this.fromFlag = this.enumFrom.EDIT;
 				this.btnMainText = "修改"
 				this.imgDefaultPath = param.imgPath
+				uni.setNavigationBarTitle({
+				    title: '修改账簿'
+				});
 			}
 			console.log(this.imgDefaultPath);
 		},

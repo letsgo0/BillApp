@@ -80,7 +80,10 @@
 			this.param.page = params.page || 0;
 			if (this.param.id !== 0) {
 				this.fromFlag = this.enumFrom['EDIT'];
-				this.btnMainText = "修改"
+				this.btnMainText = "修改";
+				uni.setNavigationBarTitle({
+				    title: '修改账簿记录'
+				});
 			}
 		},
 		methods: {
