@@ -1,5 +1,5 @@
 # BillApp
-简易人亲账本APP
+简易人亲账本APP,最新[打包链接](https://github.com/letsgo0/BillApp/blob/master/unpackage/release/apk/__UNI__7F7D508__20220207194633.apk)
 
 # 说明
 1. 本项目针对人亲账簿的电子化，使用uniapp(vue3+plus.sqlite)编辑生成安卓app，满足简单的增删改查；
